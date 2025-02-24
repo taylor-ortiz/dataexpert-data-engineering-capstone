@@ -1,0 +1,1 @@
+select distinct city from tayloro.colorado_crimes_with_cities order by city asc
