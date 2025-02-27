@@ -37,6 +37,8 @@ def business_entity_dag():
     production_table = f'{schema}.colorado_business_entities'
 
     # Correctly reference Airflow macros
+    business_entities_with_ranking = f"{production_table}_with_ranking"
+    final_county_tier_rank = f'{schema}.colorado_final_county_tier_rank'
     staging_table = f"{production_table}_stg_{{{{ yesterday_ds_nodash }}}}"
     dupes_staging_table = f"{production_table}_dupes_stg_{{{{ yesterday_ds_nodash }}}}"
     dupes_table = f"{production_table}_duplicates"
@@ -182,6 +184,8 @@ def business_entity_dag():
           (entityid, geo_city, geo_county, geo_state, geo_postcode, formatted_address)
         Builds and executes an INSERT query to load these records into the temporary geo table.
         Assumes that the first column (entityid) is numeric (BIGINT) and the rest are strings.
+        Applies a final check on the zip code (geo_postcode) to ensure it is either a valid 5-digit string
+        or is blank.
         """
         if not aggregated_records:
             print("No records to insert from API responses.")
@@ -190,16 +194,27 @@ def business_entity_dag():
         values_list = []
         for rec in aggregated_records:
             rec_values = []
-            # Iterate over the fields with index
             for idx, field in enumerate(rec):
-                if field is None:
-                    rec_values.append("NULL")
+                # Final check for the zip code (geo_postcode, index 4)
+                if idx == 4:
+                    if field is not None:
+                        field = str(field).strip()
+                        if len(field) >= 5:
+                            candidate = field[:5]
+                            # Use candidate if it's all digits; otherwise blank it out.
+                            if candidate.isdigit():
+                                field = candidate
+                            else:
+                                field = ''
+                        else:
+                            field = ''
+                # For the first field (entityid), assume it's numeric and do not quote.
+                if idx == 0:
+                    rec_values.append(str(field))
                 else:
-                    # For the first field (entityid), assume it's numeric and do not quote.
-                    if idx == 0:
-                        rec_values.append(str(field))
+                    if field is None:
+                        rec_values.append("NULL")
                     else:
-                        # Escape single quotes in strings and wrap in single quotes
                         rec_values.append("'" + str(field).replace("'", "''") + "'")
             values_list.append("(" + ", ".join(rec_values) + ")")
         values_clause = ", ".join(values_list)
@@ -513,6 +528,25 @@ def business_entity_dag():
         }
     )
 
+    reformat_zip_code = PythonOperator(
+        task_id="reformat_zip_code",
+        python_callable=execute_trino_query,
+        op_kwargs={
+            'query': f"""
+                UPDATE {staging_table}
+                SET principalzipcode = 
+                    CASE 
+                        WHEN LENGTH(TRIM(principalzipcode)) >= 5 
+                             AND TRY_CAST(SUBSTR(TRIM(principalzipcode), 1, 5) AS INTEGER) IS NOT NULL 
+                        THEN SUBSTR(TRIM(principalzipcode), 1, 5)
+                        ELSE ''
+                    END
+                WHERE principalstate = 'CO'
+            """
+        }
+    )
+
+
 
     update_county_on_staging_table = PythonOperator(
         task_id="update_county_on_staging_table",
@@ -755,6 +789,30 @@ def business_entity_dag():
         }
     )
 
+    insert_business_entities_with_ranking = PythonOperator(
+        task_id="insert_business_entities_with_ranking",
+        python_callable=execute_trino_query,
+        op_kwargs={
+            'query': f"""
+                INSERT INTO {business_entities_with_ranking}
+                SELECT
+                    stg.*,
+                    fr.crime_rank,
+                    fr.income_rank,
+                    fr.population_rank,
+                    fr.final_rank
+                FROM {staging_table} stg
+                LEFT JOIN {final_county_tier_rank} fr
+                    ON LOWER(stg.principalcounty) = LOWER(fr.county)
+                WHERE stg.entityid NOT IN (
+                        SELECT entityid FROM {dupes_staging_table}
+                    )
+                  AND stg.principalcounty IS NOT NULL
+            """
+        }
+    )
+
+
     insert_duplicates = PythonOperator(
         task_id="insert_duplicates",
         python_callable=execute_trino_query,
@@ -847,6 +905,7 @@ def business_entity_dag():
             >> create_addded_city_county_zip_staging_table
             >> fetch_and_insert_business_entities_yesterday
             >> filter_invalid_addresses
+            >> reformat_zip_code
             >> update_county_on_staging_table
             >> process_unmatched_entities_task
             >> check_validated_address_combos_task
@@ -859,6 +918,7 @@ def business_entity_dag():
             >> run_dq_check_entityformdate
             >> run_dq_check_no_unexpected_duplicates
             >> insert_new_records_task
+            >> insert_business_entities_with_ranking
             >> insert_duplicates
             >> insert_misfits
             >> drop_staging_table_task
