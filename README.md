@@ -5,8 +5,12 @@
 #
 
 <p align="center">
-  <strong>A capstone project that builds a program for Colorado's OEDIT to allocate security system subsidies to businesses using historical crime, population, and income data trends from 1997-2020.</strong>
+  <strong>A data engineering capstone project that builds a program for Colorado's OEDIT to allocate security system subsidies to businesses using historical crime, population, and income data trends from 1997-2020.</strong>
 </p>
+
+### About
+
+My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engineering bootcamp as part of the January 2025 bootcamp. Part of the requirements for achieving the highest certification in the bootcamp is to complete 
 
 ### Features
 
@@ -16,11 +20,23 @@
 * Comprehensive architecture diagram
 * Comprehensive data dictionary displaying all data sources and manipulations used
 
-<img width="1412" alt="Screenshot 2025-02-23 at 9 33 19 PM" src="https://github.com/user-attachments/assets/1bd91a93-0dc1-406c-a264-ac56c4308ac8" />
+## Table of Contents
+1. [Technology Choices](#technology)
 
-# Contents
+
+## Technology
+
+* Identify a problem you'd like to solve.
+* Scope the project and choose datasets.
+* Use at least 2 different data sources and formats (e.g., CSV, JSON, APIs), with at least 1 million rows.
+* Define your use case: analytics table, relational database, dashboard, etc.
+* Choose your tech stack and justify your choices.
+* Explore and assess the data.
+* Identify and resolve data quality issues.
+* Document your data cleaning steps.
+* Create a data model diagram and dictionary.
+* Build ETL pipelines to transform and load the data.
+* Run pipelines and perform data quality checks.
+* Visualize or present the data through dashboards, applications, or reports.
 
 
-<details markdown="1" name="alright"><summary>Alright</summary>
-Stuff
-</details>
