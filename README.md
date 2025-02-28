@@ -29,6 +29,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
    2. [KPIs and Use Cases](#kpis-and-use-cases)
       1. [County Level](#county-level)
       2. [City Level](#city-level)
+   3. [Datasets Used](#datasets-used)
 
 
 ## Capstone Requirements
@@ -114,7 +115,9 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 
 </details>
 
+### Datasets Used
 
+<a href="https://data.colorado.gov/Public-Safety/Crimes-in-Colorado/j6g4-gayk/about_data" target="_blank">Crimes in Colorado (2016-2020)</a>
 
 
 
