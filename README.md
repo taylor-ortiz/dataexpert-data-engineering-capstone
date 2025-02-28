@@ -14,6 +14,8 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 
 ### Features
 
+* 11,252,000 rows of data extracted
+* x transformed and aggregated
 * Grafana dashboards displaying fifteen required KPIs 
 * 27 task DAG using Airflow data pipeline orchestration running in Astronomer production
 * Medallion architecture data design patterns
@@ -118,7 +120,17 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 ### Datasets Used
 
 - [Crimes in Colorado (2016-2020)](https://data.colorado.gov/Public-Safety/Crimes-in-Colorado/j6g4-gayk/about_data): Offenses in Colorado for 2016 through 2020 by Agency from the FBI's Crime Data Explorer.
+    - Number of rows: 3.1M
 - [Crimes in Colorado (1997-2015)](https://data.colorado.gov/Public-Safety/Crimes-in-Colorado-1997-to-2015/6vnq-az4b/about_data): Crime stats for the State of Colorado from 1997 to 2015. Data provided by the CDPS and the FBI's Crime Data Explorer (CDE).
+    - Number of rows: 4.95M
+- [Personal Income in Colorado](https://data.colorado.gov/Labor-and-Employment/Personal-Income-in-Colorado/2cpa-vbur/about_data): Income (per capita or total) for each county by year with rank and population. From Colorado Department of Labor and Employment (CDLE), since 1969.
+    - Number of rows: 10k
+- [Population Projections in Colorado](https://data.colorado.gov/Demographics/Population-Projections-in-Colorado/q5vp-adf3/about_data): Actual and predicted population data by gender and age from the Department of Local Affairs (DOLA), from 1990 to 2040.
+    - Number of rows: 382k
+- [Business Entities in Colorado](https://data.colorado.gov/Business/Business-Entities-in-Colorado/4ykn-tg5h/about_data): Colorado Business Entities (corporations, LLCs, etc.) registered with the Colorado Department of State (CDOS) since 1864.
+    - Number of rows: 2.81M
+
+Access the entire [capstone data dictionary](https://github.com/taylor-ortiz/dataexpert-data-engineering-capstone/blob/main/Capstone-data-dictionary.csv) for more detailed info on these datasets used.
 
 
 
