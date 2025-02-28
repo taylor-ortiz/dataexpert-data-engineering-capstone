@@ -51,13 +51,13 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 ### Problem Statement
 
 * The State of Colorado has hired your data firm to develop an internal back-office tool to support a critical initiative for the Office of Economic Development and International Trade (OEDIT). The program, B.A.S.E. (Business Assistance for Security Enhancements), is designed to evaluate and qualify businesses across the state for business security system subsidies to protect their business based on historical crime trends, income, and population data by city and county. Historical data from 1997 to 2020, as well as real time data, will be analyzed to determine which security tiers businesses qualify for.
-* Additionally, the State of Colorado has fifteen KPIs and use cases they would like to see vizualized out of the extracted, transformed and aggregated data.
+* Additionally, the State of Colorado has sixteen KPIs and use cases they would like to see vizualized out of the extracted, transformed and aggregated data to assist them in planning, funding and outreach initiatives. 
 * This tool will allow OEDIT to automatically notify active businesses in good standing about the subsidies they qualify for, streamlining the application process for business owners seeking to participate. Lastly, the State requires the creation of an intuitive user experience that enables businesses to search for their assigned tier, providing them with easy access to their eligibility information.
 
 ### KPIs and Use Cases
 
 <details>
-<summary id="county-level">County Level</summary>
+<summary id="county-level">County Level KPIs and Use Cases</summary>
 
 1. **KPI:** Set a goal for each police agency within a given county to reduce crime by 5% within the next fiscal year, based on a baseline crime count from historical data.  
    - **Use Case:** Calculate crime count for police agencies in a given county to get a baseline number.
@@ -86,19 +86,35 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 9. **KPI:** Display crime rates compared to median household income to pinpoint high-risk areas.  
    - **Use Case:** Compare crime data with median household income for each county.
 
-10. **KPI:** Illustrate crime type distribution by county to better understand localized trends.  
-    - **Use Case:** Analyze the distribution of different crime types across each county from 1997–2020.
+10. **KPI:** Illustrate crime type distribution by county by Property, Person and Society to better understand where to best allocate safety resources 
+    - **Use Case:** Analyze the distribution of different crime types across each county from 1997–2020 for Property, Person and Society crimes.
+
+</details>
+
+<details>
+<summary id="city-level">City Level KPIs and Use Cases</summary>
+
+1. **KPI:** Deploy an interactive dashboard displaying seasonal crime trends for each city to detect seasonal peaks to guide targeted patrol planning.  
+   - **Use Case:** Show seasonal crime trends for the year in each city.
+
+2. **KPI:** Identify and report the top three crime categories most prevalent during daytime (6 AM–6 PM) in each city to optimize resource allocation during peak hours.  
+   - **Use Case:** Determine which crimes are more likely to happen during the day for a city.
+
+3. **KPI:** Calculate the average age of individuals involved in each crime category across cities to support the development of tailored intervention programs.  
+   - **Use Case:** Compute the average age for crime categories across cities.
+
+4. **KPI:** Identify and report the top three crime categories most common at night (6 PM–6 AM) in each city to inform optimized night patrol scheduling.  
+   - **Use Case:** Determine which crimes are more likely to happen at night for a city.
+
+5. **KPI:** Develop a dynamic visualization that shows the percentage distribution of crime types by city by Property, Person and Society to support targeted law enforcement initiatives.  
+   - **Use Case:** Display crime type distribution by city.
+
+6. **KPI:** Provide an analysis dashboard showing average crime trends by day of the week for each city, highlighting peak crime days to drive strategic patrol scheduling.  
+   - **Use Case:** Show crime trends on average by day of the week to determine when to patrol more.
 
 </details>
 
 
-#### City Level
-- [x] Show seasonal crime trends for year in each city 
-- [x] What crimes are more likely to happen during the day for a city?
-- [x] Average age for crime categories across cities
-- [x] What crimes are more likely to happen at night for a city?
-- [x] Show crime type distribution by city
-- [x] Show crime trends on average by day of the week so we know when to patrol more
 
 
 
