@@ -14,7 +14,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 
 ### Features
 
-* 11,252,000 rows of data extracted
+* 11,252,064 rows of data extracted
 * x transformed and aggregated
 * Grafana dashboards displaying fifteen required KPIs 
 * 27 task DAG using Airflow data pipeline orchestration running in Astronomer production
@@ -31,7 +31,8 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
    2. [KPIs and Use Cases](#kpis-and-use-cases)
       1. [County Level](#county-level)
       2. [City Level](#city-level)
-   3. [Datasets Used](#datasets-used)
+   3. [Data Sources](#data-sources)
+   4. [Data Tables](#data-tables)
 
 
 ## Capstone Requirements
@@ -117,7 +118,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 
 </details>
 
-### Datasets Used
+### Data Sources
 
 - [Crimes in Colorado (2016-2020)](https://data.colorado.gov/Public-Safety/Crimes-in-Colorado/j6g4-gayk/about_data): Offenses in Colorado for 2016 through 2020 by Agency from the FBI's Crime Data Explorer.
     - Number of rows: 3.1M
@@ -129,8 +130,94 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
     - Number of rows: 382k
 - [Business Entities in Colorado](https://data.colorado.gov/Business/Business-Entities-in-Colorado/4ykn-tg5h/about_data): Colorado Business Entities (corporations, LLCs, etc.) registered with the Colorado Department of State (CDOS) since 1864.
     - Number of rows: 2.81M
+- [Colorado County Boundaries](https://data-cdphe.opendata.arcgis.com/datasets/CDPHE::colorado-county-boundaries/about): This feature class contains county boundaries for all 64 Colorado counties and 2010 US Census attributes data describing the population within each county.
+    - Number of rows: 64
+
+
+### Data Tables
+
+<details>
+  <summary id="bronze-layer">Bronze Layer (raw) data</summary>
+
+1. **colorado_business_entities_raw**
+   - **Number of rows:** 984,368
+2. **colorado_city_county_zip_raw**
+   - **Number of rows:** 760
+3. **colorado_county_coordinates_raw**
+   - **Number of rows:** 64
+4. **colorado_crimes_1997_2015_raw**
+   - **Number of rows:** 4,952,282
+5. **colorado_crimes_2016_2020_raw**
+   - **Number of rows:** 3,101,365
+
+
+</details>
+
+<details>
+  <summary id="silver-layer">Silver Layer (transform) data</summary>
+
+1. **colorado_business_entities**
+   - **Number of rows:** 817,324 (grows by Airflow pipeline)
+2. **colorado_business_entities_duplicates**
+   - **Number of rows:** 721 (grows by Airflow pipeline)
+3. **colorado_business_entities_misfit_entities**
+   - **Number of rows:** 71 (grows by Airflow pipeline)
+4. **colorado_business_entities_with_ranking**
+   - **Number of rows:** 817,324 (grows by Airflow pipeline)
+5. **colorado_crime_population_trends**
+   - **Number of rows:** 1,536
+6. **colorado_crime_tier_arson**
+   - **Number of rows:** 72
+7. **colorado_crime_tier_burglary**
+   - **Number of rows:** 79
+8. **colorado_crime_tier_county_rank**
+   - **Number of rows:** 79
+9. **colorado_crime_tier_larceny_theft**
+   - **Number of rows:** 79
+10. **colorado_crime_tier_property_destruction**
+   - **Number of rows:** 79
+11. **colorado_crime_tier_property_destruction**
+   - **Number of rows:** 70
+12. **colorado_crime_tier_stolen_property**
+   - **Number of rows:** 75
+13. **colorado_crime_tier_vehicle_theft**
+   - **Number of rows:** 79
+14. **colorado_crimes**
+   - **Number of rows:** 8,053,647
+15. **colorado_crimes_2016_2020_with_cities**
+   - **Number of rows:** 2,771,984
+</details>
+
+<details>
+  <summary id="gold-layer">Gold Layer (aggregate) data</summary>
+
+  1. **colorado_avg_age_per_crime_category_1997_2020**
+     - Number of rows: 3,154
+  2. **colorado_city_crime_counts_1997_2020**
+     - Number of rows: 182
+  3. **colorado_city_crime_time_likelihood**
+     - Number of rows: 3,206
+  4. **colorado_city_seasonal_crime_rates_1997_2020**
+     - Number of rows: 2,196
+  5. **colorado_county_agency_crime_counts**
+     - Number of rows: 526
+  6. **colorado_county_average_income_1997_2020**
+     - Number of rows: 64
+  7. **colorado_county_crime_per_capita_1997_2020**
+     - Number of rows: 64
+  8. **colorado_county_crime_per_capita_with_coordinates**
+     - Number of rows: 64
+  9. **colorado_county_crime_vs_population_1997_2020**
+     - Number of rows: 1665
+  10. **colorado_county_seasonal_crime_rates_1997_2020**
+     - Number of rows: 911
+  11. **colorado_crime_category_totals_per_county_1997_2020**
+     - Number of rows: 1520
+  12. **colorado_crime_type_distribution_by_city**
+     - Number of rows: 549
+  13. **colorado_crime_vs_median_household_income_1997_2020**
+     - Number of rows: 1536
+  
+</details>
 
 Access the entire [capstone data dictionary](https://github.com/taylor-ortiz/dataexpert-data-engineering-capstone/blob/main/Capstone-data-dictionary.csv) for more detailed info on these datasets used.
-
-
-
