@@ -39,7 +39,8 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
    2. [How Tiers Are Calculated and Assigned](#how-tiers-are-calculated-and-assigned)
         1. [Step 1: Identify Criteria](#step-1-identify-criteria)
         2. [Step 2: Establish Individual Rankings](#step-2-establish-individual-rankings)
-        3. [Example Query: Arson Crime Ranking](#example-arson-query)
+            1. [Example Query: Destruction/Damage/Vandalism of Property Crime Ranking](#example-property-crime-query)
+            2. [Example Table: Destruction/Damage/Vandalism of Property Crime Ranking](#example-property-crime-table)
 4. [Business Entity Search Dashboard](#business-entity-search-dashboard)
 5. [Colorado County Dashboard](#colorado-county-dashboard)
 6. [Colorado City Dashboard](#colorado-city-dashboard)
@@ -335,9 +336,9 @@ For median household income, we:
 </details>
 
 <details>
-<summary id="example-arson-query"><strong>Example Query: Arson Crime Ranking</strong></summary>
+<summary id="example-property-crime-query"><strong>Example Query: Destruction/Damage/Vandalism of Property Crime Ranking</strong></summary>
 <br/>
-Below is an example query for evaluating the arson crime category and assigning a tier to counties:
+Below is an example query for evaluating the Destruction/Damage/Vandalism of Property crime category and assigning a tier to counties:
 
 ```sql
 CREATE TABLE tayloro.colorado_crime_tier_arson AS
@@ -347,7 +348,7 @@ WITH crime_aggregated AS (
         county,
         COUNT(*) AS total_arson_crimes
     FROM academy.tayloro.colorado_crimes
-    WHERE offense_category_name = 'Arson'
+    WHERE offense_category_name = 'Destruction/Damage/Vandalism of Property'
     GROUP BY county
 ),
 crime_percentiles AS (
@@ -374,10 +375,12 @@ crime_tiers AS (
 )
 SELECT * FROM crime_tiers;
 ```
-
 </details>
 
-
+<details>
+<summary id="example-property-crime-table"><strong>Example Table: Destruction/Damage/Vandalism of Property Crime Ranking</strong></summary>
+<br/>
+</details>
 
 
 
