@@ -41,6 +41,8 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
         2. [Step 2: Establish Individual Rankings](#step-2-establish-individual-rankings)
             1. [Example Query: Destruction/Damage/Vandalism of Property Crime Ranking](#example-property-crime-query)
             2. [Example Table: Destruction/Damage/Vandalism of Property Crime Ranking](#example-property-crime-table)
+        3. [Step 3: Merge Individual Crime Rankings to Form a Unified Crime Tier County Rank](#merge-individual-crime-rankings)
+        4. [Step 4: Merge Rankings for Final County Tier Rank](#final-county-tier)
 4. [Business Entity Search Dashboard](#business-entity-search-dashboard)
 5. [Colorado County Dashboard](#colorado-county-dashboard)
 6. [Colorado City Dashboard](#colorado-city-dashboard)
@@ -274,11 +276,13 @@ Access the entire [capstone data dictionary](https://github.com/taylor-ortiz/dat
 
 ### Subsidy Tiers
 
-Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. Each subsidy tier below offers a gradual increase of security system services based on the tier that your business qualifies for. The idea is that tiers will be backfilled and assigned on the source business entities dataset and as new business entities are added daily to the Colorado Information Marketplace, those records will also be assigned a tier through the Airflow orchestration that we will cover below. However, how are tiers actually calculated and assigned? Read on!
+Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. 1 indicates the lowest level need and 4 indicates the highest level need. Each subsidy tier below offers a gradual increase of security system services based on the tier that your business qualifies for. The idea is that tiers will be backfilled and assigned on the source business entities dataset and as new business entities are added daily to the Colorado Information Marketplace, those records will also be assigned a tier through the Airflow orchestration that we will cover below. However, how are tiers actually calculated and assigned? Read on!
 
 <img width="1406" alt="Screenshot 2025-02-28 at 4 44 20 PM" src="https://github.com/user-attachments/assets/46d1a897-69bd-4d81-a2b7-61c1001996ef" />
 
 ### How Tiers Are Calculated and Assigned
+
+![B A S E  Future State Diagram (5)](https://github.com/user-attachments/assets/d665e2b9-ae7f-4bd7-85f0-6c5f5fedd3b6)
 
 <details>
 <summary id="step-1-identify-criteria"><strong>Step 1: Identify Criteria</strong></summary>
@@ -313,7 +317,7 @@ For each of the 7 selected crime categories:
 - **Compute Percentile Ranks:**  
   Use a percentile function (e.g., `PERCENT_RANK()`) to determine each county’s standing relative to others.
 - **Assign Tiers:**  
-  Based on the percentile (for example, dividing into quartiles), assign a tier (usually 1–4) for that specific crime.
+  Counties in the highest percentiles (top 25%) receive an assignment of 4. Counties >= 50% and <= 75% receive an assignment of 3. Counties >= 25% and <= 50% receive an assignment of 2. Counties that are <= 25% receive an assignment of 1. 
 
 ##### Population-Adjusted Crime (Crime Per Capita)
 We adjust raw crime counts by county population to calculate the crime rate per 1,000 residents. This involves:
@@ -322,7 +326,7 @@ We adjust raw crime counts by county population to calculate the crime rate per 
 - **Averaging:**  
   Compute an average crime rate per county over the selected years.
 - **Ranking:**  
-  Determine percentile ranks and assign tiers similarly to the individual crime categories.
+  Counties in the highest percentiles (top 25%) receive an assignment of 4. Counties >= 50% and <= 75% receive an assignment of 3. Counties >= 25% and <= 50% receive an assignment of 2. Counties that are <= 25% receive an assignment of 1. 
 
 ##### Income
 For median household income, we:
@@ -331,7 +335,11 @@ For median household income, we:
 - **Compute Percentile Ranks:**  
   Establish how each county compares to others.
 - **Assign Tiers:**  
-  Counties in the highest percentiles (top 25%) receive one tier, and so on for the others.
+  Income is the inverse of the previous two. We actually want to rank the best Income counties the lowest because they would require less subsidy assistance than lower income counties. Therefore, Counties in the highest percentiles (top 25%) receive an assignment of 1. Counties >= 50% and <= 75% receive an assignment of 2. Counties >= 25% and <= 50% receive an assignment of 3. Counties that are <= 25% receive an assignment of 4. 
+
+  Below is an example distribution. This is not perfect and I would certainly look to have this be a little more even but the result is good for a public dataset.
+
+  <img width="1123" alt="Screenshot 2025-02-28 at 5 24 50 PM" src="https://github.com/user-attachments/assets/b81e41d2-5fc1-4cf4-8055-36df7663a537" />
 
 </details>
 
@@ -380,32 +388,136 @@ SELECT * FROM crime_tiers;
 <details>
 <summary id="example-property-crime-table"><strong>Example Table: Destruction/Damage/Vandalism of Property Crime Ranking</strong></summary>
 <br/>
+<img width="969" alt="Screenshot 2025-02-28 at 9 07 04 PM" src="https://github.com/user-attachments/assets/56a36431-784e-4ca9-a5c3-a9c155987be1" />
 </details>
 
+<details>
+<summary id="merge-individual-crime-rankings"><strong>Step 3: Merge Individual Crime Rankings to Form a Unified Crime Tier County Rank</strong></summary>
+
+After calculating individual crime tiers for each of the 7 selected crime categories, the next step is to merge these rankings into a single unified score per county. This unified score—referred to as the **overall crime tier**—is computed by averaging the individual tiers for each county, then rounding the result to the nearest whole number. The process is accomplished by:
+
+- **Unioning the Individual Tables:**  
+  All individual crime tier tables (e.g., for property destruction, burglary, larceny/theft, etc.) are combined using a `UNION ALL`. Each record is tagged with its corresponding table name for identification.
+
+- **Pivoting and Aggregating Data:**  
+  The combined dataset is grouped by county. For each crime category, the query selects the crime tier, and then computes an average of these tiers across all categories.
+
+- **Final Ordering:**  
+  The unified table is then sorted by the overall crime tier in descending order, highlighting counties with the highest aggregated crime tiers.
+
+Below is the SQL query that performs these operations:
+
+```sql
+CREATE TABLE tayloro.colorado_crime_tier_county_rank AS
+WITH county_scores AS (
+    SELECT
+        county_name,
+        -- Select the crime tiers for each category
+        MAX(CASE WHEN table_name = 'colorado_crime_tier_property_destruction' THEN crime_tier ELSE NULL END) AS property_destruction_tier,
+        MAX(CASE WHEN table_name = 'colorado_crime_tier_burglary' THEN crime_tier ELSE NULL END) AS burglary_tier,
+        MAX(CASE WHEN table_name = 'colorado_crime_tier_larceny_theft' THEN crime_tier ELSE NULL END) AS larceny_theft_tier,
+        MAX(CASE WHEN table_name = 'colorado_crime_tier_vehicle_theft' THEN crime_tier ELSE NULL END) AS vehicle_theft_tier,
+        MAX(CASE WHEN table_name = 'colorado_crime_tier_robbery' THEN crime_tier ELSE NULL END) AS robbery_tier,
+        MAX(CASE WHEN table_name = 'colorado_crime_tier_arson' THEN crime_tier ELSE NULL END) AS arson_tier,
+        MAX(CASE WHEN table_name = 'colorado_crime_tier_stolen_property' THEN crime_tier ELSE NULL END) AS stolen_property_tier,
+        -- Calculate the average of all crime tiers
+        ROUND(
+            AVG(
+                CASE
+                    WHEN table_name IN (
+                        'colorado_crime_tier_property_destruction',
+                        'colorado_crime_tier_burglary',
+                        'colorado_crime_tier_larceny_theft',
+                        'colorado_crime_tier_vehicle_theft',
+                        'colorado_crime_tier_robbery',
+                        'colorado_crime_tier_arson',
+                        'colorado_crime_tier_stolen_property'
+                    ) THEN crime_tier
+                    ELSE NULL
+                END
+            )
+        ) AS overall_crime_tier -- Round to the nearest whole number
+    FROM (
+        -- Union all 7 crime tier tables
+        SELECT county_name, 'colorado_crime_tier_property_destruction' AS table_name, crime_tier FROM academy.tayloro.colorado_crime_tier_property_destruction
+        UNION ALL
+        SELECT county_name, 'colorado_crime_tier_burglary' AS table_name, crime_tier FROM academy.tayloro.colorado_crime_tier_burglary
+        UNION ALL
+        SELECT county_name, 'colorado_crime_tier_larceny_theft' AS table_name, crime_tier FROM academy.tayloro.colorado_crime_tier_larceny_theft
+        UNION ALL
+        SELECT county_name, 'colorado_crime_tier_vehicle_theft' AS table_name, crime_tier FROM academy.tayloro.colorado_crime_tier_vehicle_theft
+        UNION ALL
+        SELECT county_name, 'colorado_crime_tier_robbery' AS table_name, crime_tier FROM academy.tayloro.colorado_crime_tier_robbery
+        UNION ALL
+        SELECT county_name, 'colorado_crime_tier_arson' AS table_name, crime_tier FROM academy.tayloro.colorado_crime_tier_arson
+        UNION ALL
+        SELECT county_name, 'colorado_crime_tier_stolen_property' AS table_name, crime_tier FROM academy.tayloro.colorado_crime_tier_stolen_property
+    ) combined
+    GROUP BY county_name
+)
+SELECT * FROM county_scores
+ORDER BY overall_crime_tier DESC;
+```
+
+<img width="1605" alt="Screenshot 2025-02-28 at 9 20 22 PM" src="https://github.com/user-attachments/assets/349ce15c-1724-453a-960e-45e0506d089e" />
+
+</details>
+
+<details>
+<summary id="final-county-tier"><strong>Step 4: Merge Rankings for Final County Tier Rank</strong></summary>
+
+In this step, we combine the overall crime tier county rank, the income tier rank, and the population (crime per capita) rank to generate a final composite ranking for each county. Since our primary focus is on crime, we weigh the crime rank a little heavier in our final calculation.
+
+The merging process involves:
+- **Combining Ranks:**  
+  We perform a full outer join on the three individual ranking tables to ensure every county is represented.
+- **Handling Missing Values:**  
+  `COALESCE` is used to manage missing values by defaulting to 0 when a rank is not available.
+- **Calculating the Final Rank:**  
+  The final rank is computed as the average of the three rankings. With crime being our primary focus, its rank is given slightly more influence in this average.
+- **Final Ordering:**  
+  Counties are ordered by the final average rank (in ascending order) to highlight those with the highest overall tier.
+
+Below is the SQL query that accomplishes these steps:
+
+```sql
+CREATE TABLE tayloro.colorado_final_county_tier_rank AS
+WITH combined_ranks AS (
+    SELECT
+        COALESCE(c.county_name, i.county, p.county) AS county,
+        COALESCE(c.overall_crime_tier, 0) AS crime_rank,
+        COALESCE(i.income_tier, 0) AS income_rank,
+        COALESCE(p.crime_per_capita_tier, 0) AS population_rank
+    FROM academy.tayloro.colorado_crime_tier_county_rank c
+    FULL OUTER JOIN academy.tayloro.colorado_income_household_tier_rank i
+        ON LOWER(c.county_name) = LOWER(i.county)
+    FULL OUTER JOIN academy.tayloro.colorado_population_crime_per_capita_rank p
+        ON LOWER(c.county_name) = LOWER(p.county)
+),
+average_rank AS (
+    SELECT
+        county,
+        crime_rank,
+        income_rank,
+        population_rank,
+        ROUND(
+            (crime_rank + income_rank + population_rank) /
+            NULLIF((CASE WHEN crime_rank > 0 THEN 1 ELSE 0 END
+                  + CASE WHEN income_rank > 0 THEN 1 ELSE 0 END
+                  + CASE WHEN population_rank > 0 THEN 1 ELSE 0 END), 0)
+        ) AS final_rank -- Calculate the average rank and round to the nearest whole number
+    FROM combined_ranks
+    WHERE crime_rank > 0 AND income_rank > 0 AND population_rank > 0 -- Ensure all ranks are present
+)
+SELECT * FROM average_rank
+ORDER BY final_rank ASC; -- Order by the final average rank
+```
+
+<img width="1032" alt="Screenshot 2025-02-28 at 9 21 32 PM" src="https://github.com/user-attachments/assets/3b42d140-7104-4218-9634-de3663caea83" />
 
 
+</details>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-![B A S E  Future State Diagram (5)](https://github.com/user-attachments/assets/d665e2b9-ae7f-4bd7-85f0-6c5f5fedd3b6)
-
-
-<img width="1123" alt="Screenshot 2025-02-28 at 5 24 50 PM" src="https://github.com/user-attachments/assets/b81e41d2-5fc1-4cf4-8055-36df7663a537" />
 
 ## Business Entity Search Dashboard
 <img width="1412" alt="Screenshot 2025-02-28 at 5 08 32 PM" src="https://github.com/user-attachments/assets/3da8052f-2a73-4a00-aaa3-1314f4ea01b1" />
