@@ -279,7 +279,7 @@ Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. Each su
 ### How Tiers Are Calculated and Assigned
 
 <details>
-<summary><strong>Step 1: Identify Criteria</strong></summary>
+<summary id="step-1-identify-criteria"><strong>Step 1: Identify Criteria</strong></summary>
 
 - **Crimes:**  
   Out of all the crime categories that exist, I chose 7 that closely resembled property-related or adjacent crimes that would factor into the ranking:
