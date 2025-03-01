@@ -302,7 +302,7 @@ Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. Each su
 
 <details>
 <summary id="step-2-establish-individual-rankings"><strong>Step 2: Establish Individual Rankings</strong></summary>
-
+<br/>
 For each metric, we transform raw data into a standardized ranking by following a similar process:
 
 ##### Crime Categories
@@ -336,7 +336,7 @@ For median household income, we:
 
 <details>
 <summary id="example-arson-query"><strong>Example Query: Arson Crime Ranking</strong></summary>
-
+<br/>
 Below is an example query for evaluating the arson crime category and assigning a tier to counties:
 
 ```sql
