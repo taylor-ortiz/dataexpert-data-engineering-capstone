@@ -675,47 +675,49 @@ The dashboard below enables a business owner to navigate to this dashboard, sear
 
 <details>
 <summary id="business-entity-data-cleaning"><strong>In-depth Summary of Business Entities Data Cleaning and Update Process</strong></summary>
+<br/>
 
 **Challenges Faced:**  
-- **Mismatches in Data:** A significant number of records in the `colorado_business_entities` table did not have corresponding county information when joined with the reference table (`colorado_city_county_zip`).  
-- **Inconsistent Data Formatting:** Issues such as typos, case discrepancies, and extra spaces in city names and ZIP codes led to failed matches.  
-- **Incomplete Reference Data:** Missing city/ZIP combinations and duplicate entries in the reference table required both augmentation and deduplication to ensure accurate mapping.
+- **Mismatches in Data:** Many records in the `colorado_business_entities` table lacked corresponding county information when joined with the reference table (`colorado_city_county_zip`).  
+- **Inconsistent Data Formatting:** Typos, case discrepancies, and extra spaces in city names and ZIP codes led to failed matches.  
+- **Incomplete Reference Data:** Missing city/ZIP combinations and duplicate entries in the reference table required augmentation and deduplication to ensure accurate mapping.
 
 **Process Overview:**
 
-1. **Initial Analysis and Identification of Issues**  
+1. **Initial Analysis and Identification of Issues:**  
    - Ran queries to identify records in `colorado_business_entities` with no matching county in the reference table.  
    - Examined unmatched city/ZIP pairs to determine the most frequent discrepancies.
 
-2. **Data Correction in the Business Entities Table**  
+2. **Data Correction in the Business Entities Table:**  
    - Performed manual corrections for known typos and inconsistencies (e.g., updating “peyton co” to “Peyton”, correcting ZIP 80524 entries to “Fort Collins”).  
    - Verified corrections by running SELECT queries against both the business entities and reference datasets.
 
-3. **Assessing Match Quality**  
+3. **Assessing Match Quality:**  
    - Executed queries to compare the count of matched versus unmatched records, revealing a high number of mismatches that required further attention.
 
-4. **Inserting Missing Reference Data**  
+4. **Inserting Missing Reference Data:**  
    - Augmented the reference table by inserting missing city/ZIP combinations (e.g., added entries for “Evans” in Weld County).  
    - Inspected the reference table to ensure that the inserted data met quality standards.
 
-5. **Deduplicating the Reference Table**  
-   - Identified duplicate rows for certain city/ZIP pairs (such as “Burlington, 80807” and “New Raymer, 80742”).  
+5. **Deduplicating the Reference Table:**  
+   - Identified duplicate rows for certain city/ZIP pairs (e.g., “Burlington, 80807” and “New Raymer, 80742”).  
    - Created a new deduplicated version of the reference table and replaced the original with the cleaned version.
 
-6. **Updating the Business Entities with County Data**  
+6. **Updating the Business Entities with County Data:**  
    - Employed a final update query (using a correlated subquery) to backfill the `principalcounty` field in `colorado_business_entities` by matching normalized city and ZIP code data from the cleaned reference table.  
    - Verified the update by confirming that previously unmatched records were now successfully mapped.
 
-7. **Final Outcome**  
+7. **Final Outcome:**  
    - **Normalized Addresses:** Data cleaning (trimming, lowercasing, casting ZIP codes) ensured consistent comparisons.  
    - **Accurate Mapping:** Manual corrections and enhanced reference data led to a complete and unique set of city/ZIP combinations.  
    - **Successful Update:** The final update query backfilled the `principalcounty` field for all records, reducing unmatched counts to zero.
 
 </details>
 
+
 <details>
 <summary id="out-of-memory-spark"><strong>Out-of-Memory (OOM) Exceptions and Spark Configuration Adjustments</strong></summary>
-
+<br/>
 When processing large datasets (over a million rows) using Spark, I frequently encountered out-of-memory exceptions—especially when fetching large CSV files from S3 and writing to Iceberg. The default Spark settings were insufficient for these workloads.
 
 To address this challenge, I reviewed the Spark documentation and applied recommendations from the bootcamp. I adjusted the Spark configuration to allocate more memory to both the executors and the driver, and to optimize shuffle operations. The following settings helped mitigate the memory issues:
@@ -730,23 +732,25 @@ By increasing the memory allocation and tuning the shuffle partitions, I was abl
 
 <details>
 <summary id="ambiguous-matching"><strong>Challenge: Ambiguous City and County Matching</strong></summary>
+<br/>
 
 **Description:**  
-Initially, my orchestration relied solely on a city and county dataset to map business entities to their respective counties. However, we encountered an issue where cities that span multiple counties were being randomly assigned to a single county.
+Initially, my orchestration relied solely on a city and county dataset to map business entities to their respective counties. However, an issue arose where cities that span multiple counties were being randomly assigned to just one county.
 
 **Example:**  
-- **Aurora** is a prime example, as it spans across Douglas County, Arapahoe County, and Denver County.  
-- Without additional disambiguation, business entities located in Aurora were incorrectly mapped to one county at random, leading to inaccurate county assignments.
+- **Aurora:** This city spans across Douglas County, Arapahoe County, and Denver County.  
+- Without additional disambiguation, business entities in Aurora were incorrectly mapped to a single county at random, leading to inaccurate county assignments.
 
 **Resolution:**  
-- To address this, I enhanced the reference dataset by adding a **ZIP code** column.  
-- By matching on both the city and ZIP code of the business entity's address, the mapping became much more precise.  
-- This change ensured that each business entity is matched to the correct county based on a distinct combination of city and ZIP code.
+- I enhanced the reference dataset by adding a **ZIP code** column.  
+- By matching on both the city and ZIP code of a business entity's address, the mapping became much more precise.  
+- This change ensured that each business entity is matched to the correct county based on the distinct combination of city and ZIP code.
 
 **Outcome:**  
 Incorporating the ZIP code significantly improved the accuracy of county assignments, eliminating the randomness in cases where cities span multiple counties.
 
 </details>
+
 
 
 ## Next Steps and Closing Thoughts
