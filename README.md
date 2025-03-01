@@ -39,10 +39,9 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
    2. [How Tiers Are Calculated and Assigned](#how-tiers-are-calculated-and-assigned)
         1. [Step 1: Identify Criteria](#step-1-identify-criteria)
         2. [Step 2: Establish Individual Rankings](#step-2-establish-individual-rankings)
-            1. [Example Query: Destruction/Damage/Vandalism of Property Crime Ranking](#example-property-crime-query)
-            2. [Example Table: Destruction/Damage/Vandalism of Property Crime Ranking](#example-property-crime-table)
         3. [Step 3: Merge Individual Crime Rankings to Form a Unified Crime Tier County Rank](#merge-individual-crime-rankings)
         4. [Step 4: Merge Rankings for Final County Tier Rank](#final-county-tier)
+        5. [Step 5: Generate Business Entities Table with Final Ranking](#backfill-business-entities)
 4. [Business Entity Search Dashboard](#business-entity-search-dashboard)
 5. [Colorado County Dashboard](#colorado-county-dashboard)
 6. [Colorado City Dashboard](#colorado-city-dashboard)
@@ -341,11 +340,7 @@ For median household income, we:
 
   <img width="1123" alt="Screenshot 2025-02-28 at 5 24 50 PM" src="https://github.com/user-attachments/assets/b81e41d2-5fc1-4cf4-8055-36df7663a537" />
 
-</details>
-
-<details>
-<summary id="example-property-crime-query"><strong>Example Query: Destruction/Damage/Vandalism of Property Crime Ranking</strong></summary>
-<br/>
+  <br/>
 Below is an example query for evaluating the Destruction/Damage/Vandalism of Property crime category and assigning a tier to counties:
 
 ```sql
@@ -383,12 +378,10 @@ crime_tiers AS (
 )
 SELECT * FROM crime_tiers;
 ```
-</details>
 
-<details>
-<summary id="example-property-crime-table"><strong>Example Table: Destruction/Damage/Vandalism of Property Crime Ranking</strong></summary>
-<br/>
+  <br/>
 <img width="969" alt="Screenshot 2025-02-28 at 9 07 04 PM" src="https://github.com/user-attachments/assets/56a36431-784e-4ca9-a5c3-a9c155987be1" />
+
 </details>
 
 <details>
@@ -514,10 +507,29 @@ ORDER BY final_rank ASC; -- Order by the final average rank
 ```
 
 <img width="1032" alt="Screenshot 2025-02-28 at 9 21 32 PM" src="https://github.com/user-attachments/assets/3b42d140-7104-4218-9634-de3663caea83" />
-
-
 </details>
 
+<details>
+<summary id="backfill-business-entities"><strong>Step 5: Generate Business Entities Table with Final Ranking</strong></summary>
+<br/>
+In this final step, we join the final county tier rank table with the business entities table. This allows us to backfill all business entities with their corresponding ranking information based on county. The query uses a `LEFT JOIN` to ensure that every business entity is retained, matching on a case-insensitive comparison of county names.
+
+```sql
+CREATE TABLE tayloro.colorado_business_entities_with_ranking AS
+SELECT
+    be.*,
+    fr.crime_rank,
+    fr.income_rank,
+    fr.population_rank,
+    fr.final_rank
+FROM tayloro.colorado_business_entities be
+LEFT JOIN tayloro.colorado_final_county_tier_rank fr
+    ON LOWER(be.principalcounty) = LOWER(fr.county);
+```
+
+<img width="1122" alt="Screenshot 2025-02-28 at 9 39 08 PM" src="https://github.com/user-attachments/assets/75eb5f91-baa6-4e74-adc3-7a64d3c16595" />
+
+</details>
 
 ## Business Entity Search Dashboard
 <img width="1412" alt="Screenshot 2025-02-28 at 5 08 32 PM" src="https://github.com/user-attachments/assets/3da8052f-2a73-4a00-aaa3-1314f4ea01b1" />
