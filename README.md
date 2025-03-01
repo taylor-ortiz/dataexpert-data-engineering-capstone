@@ -276,10 +276,13 @@ There are four tiers in the B.A.S.E. program. Each subsidy tier below offers a g
 ### How Tiers Are Created and Assigned
 
 ## Business Entity Search Dashboard
+<img width="1412" alt="Screenshot 2025-02-28 at 5 08 32 PM" src="https://github.com/user-attachments/assets/3da8052f-2a73-4a00-aaa3-1314f4ea01b1" />
 
 ## Colorado County Dashboard
+<img width="1575" alt="Screenshot 2025-02-28 at 5 07 06 PM" src="https://github.com/user-attachments/assets/1b246758-a1ab-4e9b-a1f5-824fa8b3e81c" />
 
 ## Colorado City Dashboard
+<img width="1516" alt="Screenshot 2025-02-28 at 5 05 24 PM" src="https://github.com/user-attachments/assets/fd79e5a5-904a-4bcb-9d06-9c76d78383e4" />
 
 ## Colorado Crime Density Dashboard
 
