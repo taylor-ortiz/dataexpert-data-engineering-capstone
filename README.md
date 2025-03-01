@@ -58,7 +58,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
     2. [Out-of-Memory (OOM) Exceptions and Spark Configuration Adjustments](#out-of-memory-spark)
     3. [Challenge: Ambiguous City and County Matching](#ambiguous-matching)
     4. [Inconsistent Zip Code Formats Causing Casting Errors](#inconsistent-zip-format)
-8. [Closing Thoughts and Next Steps](#closing-thoughts-and-next-steps)
+8. [Next Steps and Closing Thoughts](#next-steps-and-closing-thoughts)
 
 
 ## Capstone Requirements
@@ -728,20 +728,26 @@ The dashboard below enables a business owner to navigate to this dashboard, sear
 
 3. **Assessing Match Quality:**  
    - Executed queries to compare the count of matched versus unmatched records, revealing a high number of mismatches that required further attention.
+  
+4. **Used Geoapify API to resolve some address issues:**
+   - Leveraged the Geocoding API from Geoapify to validate address descrepancies and improve address, city, county and zip attributes of non matching business entities
+   - One funny thing is that while processing the remaining unmatched records, I totally blew through the daily Geoapify limits and appreciate their services very much for letting me do so
+   - <img width="984" alt="Screenshot 2025-03-01 at 7 48 32 AM" src="https://github.com/user-attachments/assets/895a1cb9-ddc5-43e0-a68b-45925ba57402" />
 
-4. **Inserting Missing Reference Data:**  
+
+5. **Inserting Missing Reference Data:**  
    - Augmented the reference table by inserting missing city/ZIP combinations (e.g., added entries for “Evans” in Weld County).  
    - Inspected the reference table to ensure that the inserted data met quality standards.
 
-5. **Deduplicating the Reference Table:**  
+6. **Deduplicating the Reference Table:**  
    - Identified duplicate rows for certain city/ZIP pairs (e.g., “Burlington, 80807” and “New Raymer, 80742”).  
    - Created a new deduplicated version of the reference table and replaced the original with the cleaned version.
 
-6. **Updating the Business Entities with County Data:**  
+7. **Updating the Business Entities with County Data:**  
    - Employed a final update query (using a correlated subquery) to backfill the `principalcounty` field in `colorado_business_entities` by matching normalized city and ZIP code data from the cleaned reference table.  
    - Verified the update by confirming that previously unmatched records were now successfully mapped.
 
-7. **Final Outcome:**  
+8. **Final Outcome:**  
    - **Normalized Addresses:** Data cleaning (trimming, lowercasing, casting ZIP codes) ensured consistent comparisons.  
    - **Accurate Mapping:** Manual corrections and enhanced reference data led to a complete and unique set of city/ZIP combinations.  
    - **Successful Update:** The final update query backfilled the `principalcounty` field for all records, reducing unmatched counts to zero.
