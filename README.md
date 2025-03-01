@@ -547,13 +547,40 @@ Below is a visualization of how these datasets were merged together to form a co
 
 ## KPI and Use Case Visualizations
 
+These dashboards represent the 16 KPIs and use cases that were provided to the data firm by the state. Please note as well that Grafana allows us to create dynamic variables that enable us to choose our city or county and fetch dynamic data from those values in real time for visualization. Since these are static images, that will not be represented here, but is a huge component to the user experience. 
+
 ### Colorado County Dashboard
+
+This county dashboard shows the following use cases:
+- Calculate crime count for police agencies in a given county to get a baseline number.
+- Calculate the average median household income per county.
+- Show population trends for each county alongside corresponding crime trends by year.
+- Show population trends for each county from 1997–2020.
+- Calculate the totals for each crime category per county from 1997 to 2020 to gauge frequency.
+- Show average seasonal crime trends for each month by county.
+- Create a geo-map of crime density for counties from 1997–2020.
+- Show average income per capita for counties.
+- Compare crime data with median household income for each county.
+- Analyze the distribution of different crime types across each county from 1997–2020 for Property, Person and Society crimes.
+  
 <img width="1575" alt="Screenshot 2025-02-28 at 5 07 06 PM" src="https://github.com/user-attachments/assets/1b246758-a1ab-4e9b-a1f5-824fa8b3e81c" />
 
 ### Colorado City Dashboard
+
+This city dashboard shows the following use cases: 
+
+- Show seasonal crime trends for the year in each city.
+- Determine which crimes are more likely to happen during the day for a city.
+- Compute the average age for crime categories across cities.
+- Determine which crimes are more likely to happen at night for a city.
+- Display crime type distribution by city.
+- Show crime trends on average by day of the week to determine when to patrol more.
+  
 <img width="1516" alt="Screenshot 2025-02-28 at 5 05 24 PM" src="https://github.com/user-attachments/assets/fd79e5a5-904a-4bcb-9d06-9c76d78383e4" />
 
 ### Colorado Crime Density Dashboard
+
+This dashboard shows overall crime density on crime per capita (100k) residents across the entire State of Colorado. Its cool to see the larger areas represent the highest density and its not surprising that many of those are in the metro area of Denver.
 
 <img width="1412" alt="Screenshot 2025-02-23 at 9 33 19 PM" src="https://github.com/user-attachments/assets/504f4e15-24c7-4ddd-bdb4-fddab9cbb16b" />
 
@@ -562,7 +589,7 @@ Below is a visualization of how these datasets were merged together to form a co
 
 #### Business Entity Daily DAG
 
-The final part of the equation is our data pipeline that evaluates newly incoming business entities each day. This DAG calls out to the public Colorado Information Marketplace API every day at 6 AM MT and fetches yesterday's Colorado Business Entity data for processing. It then cleans the data, joins matching County data based on Zip and City and then assigns an appropriate subsidy tier. This DAG involves several tasks to ingest, clean, validate, enrich, and load data from the data.colorado.gov API into production tables. Below is a breakdown of each task and its purpose.
+The final part of the equation is our data pipeline that evaluates newly incoming business entities daily. This DAG calls out to the public Colorado Information Marketplace API every day at 6 AM MT and fetches yesterday's Colorado Business Entity data for processing. It then cleans the data, joins matching County data based on Zip and City and then assigns an appropriate subsidy tier. This DAG involves several tasks to ingest, clean, validate, enrich, and load data from the data.colorado.gov API into production tables. Below is a breakdown of each task and its purpose.
 
 ---
 
@@ -666,6 +693,7 @@ One of the core requirements from Zach for the capstone project is that it must 
 
 <img width="870" alt="Screenshot 2025-02-28 at 6 23 12 AM" src="https://github.com/user-attachments/assets/73aeb31d-b6fc-416d-80ef-6f64d3fbb91b" />
 
+This capture shows the successes and failures of my DAG runs as I worked through errors and bugs.
 
 <img width="1011" alt="Screenshot 2025-02-28 at 6 22 22 AM" src="https://github.com/user-attachments/assets/b2785011-3f07-43fd-8588-a07875926614" />
 
@@ -673,7 +701,7 @@ One of the core requirements from Zach for the capstone project is that it must 
 
 #### Business Entity Search Dashboard
 <br/>
-The dashboard below enables a business owner to navigate to this dashboard, search for their business entity and see information about their business, information on the available security system subsidy tiers and exactly which tier their business qualifies for. 
+The dashboard below enables a business owner to navigate to this dashboard, search for their business entity and see information about their business, information on the available security system subsidy tiers and exactly which tier their business qualifies for. In this example, Lost Coffee could search for information about their business and learn that they have been assigned a tier ranking of 3 based on all of the criteria explained above. 
 <br/>
 <img width="1412" alt="Screenshot 2025-02-28 at 5 08 32 PM" src="https://github.com/user-attachments/assets/3da8052f-2a73-4a00-aaa3-1314f4ea01b1" />
 
