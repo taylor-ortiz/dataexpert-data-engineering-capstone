@@ -14,10 +14,9 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 
 ### Features
 
-* 11,252,064 rows of data extracted
-* x transformed and aggregated
-* Grafana dashboards displaying fifteen required KPIs 
-* 27 task DAG using Airflow data pipeline orchestration running in Astronomer production
+* 9,048,771 rows of source data extracted
+* Grafana dashboards displaying 16 required KPIs
+* 28 task DAG using Airflow data pipeline orchestration running in Astronomer production
 * Medallion architecture data design patterns
 * Comprehensive architecture diagram
 * Comprehensive data dictionary displaying all data sources and manipulations used
@@ -33,6 +32,18 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
       2. [City Level](#city-level)
    3. [Data Sources](#data-sources)
    4. [Data Tables](#data-tables)
+   5. [Technologies Used](#technologies-used)
+   6. [Architecture](#architecture)
+3. [Business Entity Tier Ranking](#business-entity-tier-ranking)
+   1. [Subsidy Tiers](#subsidy-tiers)
+   2. [How Tiers Are Created and Assigned](#how-tiers-are-created-and-assigned)
+4. [Business Entity Search Dashboard](#business-entity-search-dashboard)
+5. [Colorado County Dashboard](#colorado-county-dashboard)
+6. [Colorado City Dashboard](#colorado-city-dashboard)
+7. [Colorado Crime Density Dashboard](#colorado-crime-density-dashboard)
+8. [Business Entity Data Pipeline](#business-entity-data-pipeline)
+9. [Challenges and Findings](#challenges-and-findings)
+10. [Closing Thoughts and Next Steps](#closing-thoughts-and-next-steps)
 
 
 ## Capstone Requirements
@@ -149,6 +160,9 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
    - **Number of rows:** 4,952,282
 5. **colorado_crimes_2016_2020_raw**  
    - **Number of rows:** 3,101,365
+6. **colorado_income_raw**  
+   - **Number of rows:** 9,932
+  
 
 </details>
 
@@ -185,7 +199,18 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
     - **Number of rows:** 8,053,647
 15. **colorado_crimes_2016_2020_with_cities**  
     - **Number of rows:** 2,771,984
-
+16. **colorado_crimes_with_cities**  
+    - **Number of rows:** 7,724,266
+17. **colorado_final_county_tier_rank**  
+    - **Number of rows:** 64
+18. **colorado_income_1997_2020**  
+    - **Number of rows:** 4604
+19. **colorado_income_household_tier_rank**  
+    - **Number of rows:** 64
+20. **colorado_population_raw**  
+    - **Number of rows:** 381,504
+21. **colorado_temp_geocoded_entities**  
+    - **Number of rows:** 2,033
 </details>
 
 <details>
@@ -217,7 +242,52 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
     - **Number of rows:** 549
 13. **colorado_crime_vs_median_household_income_1997_2020**  
     - **Number of rows:** 1,536
-
+14. **colorado_population_crime_per_capita_rank**  
+    - **Number of rows:** 64
+15. **colorado_total_population_per_county_1997_2020**  
+    - **Number of rows:** 1,536
+16. **coloraodo_county_crime_rate_per_capita**  
+    - **Number of rows:** 1,458
 </details>
 
 Access the entire [capstone data dictionary](https://github.com/taylor-ortiz/dataexpert-data-engineering-capstone/blob/main/Capstone-data-dictionary.csv) for more detailed info on these datasets used.
+
+### Technologies Used
+- **Python:** Programming language used for Spark jobs and Airflow orchestration
+- **Airflow:** orchestration tool that manages, schedules and automates workflows using Apache Airflow
+- **AWS:** S3 storage for CSV extracts
+- **Tabular:** data lake operations
+- **Trino:** distributed SQL query engine
+- **Geoapify:** geocoding api for address validation of business entities
+- **Grafana:** dashboards for data visualizations
+- **Astronomer:** data orchestraton platform that provides a managed service for Apache Airflow
+- **Apache Spark:** open source distributed computing system for processing source extracts from AWS
+
+### Architecture
+![B A S E  Future State Diagram (4)](https://github.com/user-attachments/assets/78f8aaf2-af71-44d2-a08c-52d9b0d766da)
+
+## Business Entity Tier Ranking
+
+### Subsidy Tiers
+
+There are four tiers in the B.A.S.E. program. Each subsidy tier below offers a gradual increase of security system services based on the tier that your business falls into based on the evaluation across the crime, population and income datasets. 
+<img width="1406" alt="Screenshot 2025-02-28 at 4 44 20 PM" src="https://github.com/user-attachments/assets/46d1a897-69bd-4d81-a2b7-61c1001996ef" />
+
+### How Tiers Are Created and Assigned
+
+## Business Entity Search Dashboard
+
+## Colorado County Dashboard
+
+## Colorado City Dashboard
+
+## Colorado Crime Density Dashboard
+
+<img width="1412" alt="Screenshot 2025-02-23 at 9 33 19 PM" src="https://github.com/user-attachments/assets/504f4e15-24c7-4ddd-bdb4-fddab9cbb16b" />
+
+
+## Business Entity Data Pipeline
+
+## Challenges and Findings
+
+## Closing Thoughts and Next Steps
