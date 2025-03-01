@@ -48,7 +48,11 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
     3. [Colorado City Dashboard](#colorado-city-dashboard)
     4. [Colorado Crime Density Dashboard](#colorado-crime-density-dashboard)
 8. [Business Entity Data Pipeline](#business-entity-data-pipeline)
-9. [Challenges and Findings](#challenges-and-findings)
+    1. [Business Entity Daily DAG](#business-entity-daily-dag)
+    2. [Task Descriptions](#task-descriptions)
+    3. [DAG Flow Order](#dag-flow-order)
+    4. [Astronomer Cloud Deployment](#astronomer-cloud-deployment)
+10. [Challenges and Findings](#challenges-and-findings)
     1. [In-depth Summary of Business Entities Data Cleaning and Update Process](#business-entity-data-cleaning)
 11. [Closing Thoughts and Next Steps](#closing-thoughts-and-next-steps)
 
@@ -548,6 +552,110 @@ LEFT JOIN tayloro.colorado_final_county_tier_rank fr
 
 
 ### Business Entity Data Pipeline
+
+#### Business Entity Daily DAG
+
+This DAG calls out to the public Colorado Information Marketplace API every day at 6 AM MT and fetches yesterday's Colorado Business Entity data for processing. It then cleans the data, joins matching County data based on Zip and City and then assigns an appropriate subsidy tier. This DAG involves several tasks to ingest, clean, validate, enrich, and load data from the data.colorado.gov API into production tables. Below is a breakdown of each task and its purpose.
+
+---
+
+#### Task Descriptions
+
+1. **create_business_entities_yesterday_stage**  
+   *Description:* Creates a staging table for business entities for yesterday’s data. This table is partitioned by `principalcounty` and sets up the structure to temporarily hold the data for further processing.
+
+2. **create_misfit_business_entities_table**  
+   *Description:* Creates a table for misfit business entities that do not meet the expected data patterns. This helps segregate records that require special attention or further review.
+
+3. **create_dupes_staging_table**  
+   *Description:* Creates a staging table for capturing potential duplicate records from the business entities data. It mirrors the structure of the main table and is partitioned by `principalcounty`.
+
+4. **create_duplicates_table**  
+   *Description:* Creates a permanent table to store confirmed duplicate records from the business entities dataset.
+
+5. **create_geo_validation_staging_table**  
+   *Description:* Creates a temporary table to hold the results of geo-validated address data. This table is partitioned by `geo_county` and is used to store responses from the Geoapify API.
+
+6. **create_addded_city_county_zip_staging_table**  
+   *Description:* Creates a staging table to store newly discovered city/county/zip combinations from geo-validation. This table is later used to update the reference data for address mapping.
+
+7. **fetch_and_insert_business_entities_yesterday**  
+   *Description:* Fetches business entity data for yesterday from the data.colorado.gov API and inserts the records into the staging table. This task calls the API, transforms the response into records, and executes an INSERT query.
+
+8. **filter_invalid_addresses**  
+   *Description:* Deletes records from the staging table that have NULL values in critical address fields (`principalcity` or `principalzipcode`), ensuring only valid addresses proceed to the next steps.
+
+9. **reformat_zip_code**  
+   *Description:* Reformats the `principalzipcode` field in the staging table to a standard 5-digit format, ensuring consistency for downstream processing.
+
+10. **update_county_on_staging_table**  
+    *Description:* Updates the `principalcounty` field in the staging table by joining with the cleaned reference table (`colorado_city_county_zip`). The matching is done using normalized (trimmed and lowercased) city names and ZIP codes.
+
+11. **process_unmatched_entities_task**  
+    *Description:* Processes records from the staging table where `principalcounty` is still NULL. It calls the Geoapify API to fetch validated address data for these unmatched entities, transforms the API responses, and inserts the results into the geo validation staging table.
+
+12. **check_validated_address_combos**  
+    *Description:* Checks validated address combinations by joining the geo validation staging table with the staging table. This task identifies new city/county/zip combinations not present in the reference table.
+
+13. **insert_validated_address_combos**  
+    *Description:* Inserts the new, validated city/county/zip combinations into the reference table (`colorado_city_county_zip`). This enhances the mapping accuracy for future data processing.
+
+14. **override_from_validated_addresses**  
+    *Description:* Updates the main business entities table by overriding existing address fields with geo-validated data. This ensures that the most accurate and standardized addresses are stored.
+
+15. **retry_update_county_on_staging_table**  
+    *Description:* Reattempts the update of the `principalcounty` field on the staging table for any records that remain unmatched after initial processing.
+
+16. **identify_duplicates_task**  
+    *Description:* Identifies duplicate records within the staging table by comparing key address and entity fields. The duplicates are then inserted into the duplicates staging table.
+
+17. **run_dq_check_null_values**  
+    *Description:* Runs a data quality check that counts records with NULL values in critical fields (`entityname`, `principalcity`, `entitytype`, `entityformdate`) to ensure data completeness.
+
+18. **run_dq_check_principalstate**  
+    *Description:* Executes a data quality check to verify that all records in the staging table have `principalstate` equal to 'CO'.
+
+19. **run_dq_check_entityformdate**  
+    *Description:* Performs a data quality check to ensure that the `entityformdate` in the staging table matches the expected date (yesterday’s date).
+
+20. **run_dq_check_no_unexpected_duplicates**  
+    *Description:* Checks for any unexpected duplicates in the staging table by grouping on `entityid` and counting occurrences greater than one.
+
+21. **insert_new_records_task**  
+    *Description:* Inserts new business entity records from the staging table into the production table, excluding any records that have been flagged as duplicates and ensuring that `principalcounty` is populated.
+
+22. **insert_business_entities_with_ranking**  
+    *Description:* Inserts business entity records along with their associated ranking information by joining the staging table with the final county tier rank table.
+
+23. **insert_duplicates**  
+    *Description:* Inserts duplicate records from the duplicates staging table into the permanent duplicates table for further review or archival.
+
+24. **insert_misfits**  
+    *Description:* Inserts misfit records (those without a valid `principalcounty`) from the staging table into the misfits table, isolating records that could not be processed normally.
+
+25. **drop_staging_table_task**  
+    *Description:* Drops the staging table to clean up temporary data once processing is complete.
+
+26. **drop_dupes_staging_table_task**  
+    *Description:* Drops the duplicates staging table to remove temporary duplicate data after it has been archived.
+
+27. **drop_geo_validation_staging_table**  
+    *Description:* Drops the geo validation staging table that was used for holding geo API responses once the data has been processed and merged.
+
+28. **drop_added_city_county_zip_staging_table**  
+    *Description:* Drops the staging table for newly added city/county/zip combinations, finalizing the cleanup of temporary tables.
+
+---
+
+#### DAG Flow Order
+
+The tasks order looks like this:
+
+<img width="543" alt="Screenshot 2025-02-28 at 10 29 57 PM" src="https://github.com/user-attachments/assets/fd136dc9-b948-41db-ba49-b3230e2c338e" />
+
+#### Astronomer Cloud Deployment
+
+One of the core requirements from Zach for the capstone project is that it must be running in a production cloud environment to count. Below are snapshots of my DAG in the Astronomer production environment running daily.
 
 <img width="870" alt="Screenshot 2025-02-28 at 6 23 12 AM" src="https://github.com/user-attachments/assets/73aeb31d-b6fc-416d-80ef-6f64d3fbb91b" />
 
