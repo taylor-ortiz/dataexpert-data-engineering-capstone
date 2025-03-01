@@ -42,13 +42,15 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
         3. [Step 3: Merge Individual Crime Rankings to Form a Unified Crime Tier County Rank](#merge-individual-crime-rankings)
         4. [Step 4: Merge Rankings for Final County Tier Rank](#final-county-tier)
         5. [Step 5: Generate Business Entities Table with Final Ranking](#backfill-business-entities)
-4. [Business Entity Search Dashboard](#business-entity-search-dashboard)
-5. [Colorado County Dashboard](#colorado-county-dashboard)
-6. [Colorado City Dashboard](#colorado-city-dashboard)
-7. [Colorado Crime Density Dashboard](#colorado-crime-density-dashboard)
+4. [KPI and Use Case Visualizations](#kpi-and-use-case-visualizations)
+    1. [Business Entity Search Dashboard](#business-entity-search-dashboard)
+    2. [Colorado County Dashboard](#colorado-county-dashboard)
+    3. [Colorado City Dashboard](#colorado-city-dashboard)
+    4. [Colorado Crime Density Dashboard](#colorado-crime-density-dashboard)
 8. [Business Entity Data Pipeline](#business-entity-data-pipeline)
 9. [Challenges and Findings](#challenges-and-findings)
-10. [Closing Thoughts and Next Steps](#closing-thoughts-and-next-steps)
+    1. [In-depth Summary of Business Entities Data Cleaning and Update Process](#business-entity-data-cleaning)
+11. [Closing Thoughts and Next Steps](#closing-thoughts-and-next-steps)
 
 
 ## Capstone Requirements
@@ -528,24 +530,24 @@ LEFT JOIN tayloro.colorado_final_county_tier_rank fr
 ```
 
 <img width="1122" alt="Screenshot 2025-02-28 at 9 39 08 PM" src="https://github.com/user-attachments/assets/75eb5f91-baa6-4e74-adc3-7a64d3c16595" />
-
 </details>
 
-## Business Entity Search Dashboard
+## KPI and Use Case Visualizations
+### Business Entity Search Dashboard
 <img width="1412" alt="Screenshot 2025-02-28 at 5 08 32 PM" src="https://github.com/user-attachments/assets/3da8052f-2a73-4a00-aaa3-1314f4ea01b1" />
 
-## Colorado County Dashboard
+### Colorado County Dashboard
 <img width="1575" alt="Screenshot 2025-02-28 at 5 07 06 PM" src="https://github.com/user-attachments/assets/1b246758-a1ab-4e9b-a1f5-824fa8b3e81c" />
 
-## Colorado City Dashboard
+### Colorado City Dashboard
 <img width="1516" alt="Screenshot 2025-02-28 at 5 05 24 PM" src="https://github.com/user-attachments/assets/fd79e5a5-904a-4bcb-9d06-9c76d78383e4" />
 
-## Colorado Crime Density Dashboard
+### Colorado Crime Density Dashboard
 
 <img width="1412" alt="Screenshot 2025-02-23 at 9 33 19 PM" src="https://github.com/user-attachments/assets/504f4e15-24c7-4ddd-bdb4-fddab9cbb16b" />
 
 
-## Business Entity Data Pipeline
+### Business Entity Data Pipeline
 
 <img width="870" alt="Screenshot 2025-02-28 at 6 23 12 AM" src="https://github.com/user-attachments/assets/73aeb31d-b6fc-416d-80ef-6f64d3fbb91b" />
 
@@ -553,7 +555,7 @@ LEFT JOIN tayloro.colorado_final_county_tier_rank fr
 <img width="1011" alt="Screenshot 2025-02-28 at 6 22 22 AM" src="https://github.com/user-attachments/assets/b2785011-3f07-43fd-8588-a07875926614" />
 
 
-## Challenges and Findings
+### Challenges and Findings
 
 <details>
 <summary id="business-entity-data-cleaning"><strong>In-depth Summary of Business Entities Data Cleaning and Update Process</strong></summary>
