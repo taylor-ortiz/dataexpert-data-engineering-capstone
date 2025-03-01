@@ -37,6 +37,8 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 3. [Business Entity Tier Ranking](#business-entity-tier-ranking)
    1. [Subsidy Tiers](#subsidy-tiers)
    2. [How Tiers Are Calculated and Assigned](#how-tiers-are-calculated-and-assigned)
+        1. [Step 1: Identify Criteria](#step-1-identify-criteria)
+        2. [Step 2: Establish Individual Rankings](#step-2-establish-individual-rankings)
 4. [Business Entity Search Dashboard](#business-entity-search-dashboard)
 5. [Colorado County Dashboard](#colorado-county-dashboard)
 6. [Colorado City Dashboard](#colorado-city-dashboard)
@@ -276,17 +278,57 @@ Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. Each su
 
 ### How Tiers Are Calculated and Assigned
 
-- Step 1: Identify Criteria
-    - **Crimes:** out of all the crime categories that exist, I chose 7 that closely resembled property related or adjacent crimes that would factor into the ranking
-        - Destruction/Damage/Vandalism of Property
-        - Burglary/Breaking & Entering
-        - Larceny/Theft Offenses
-        - Motor Vehicle Theft
-        - Robbery
-        - Arson
-        - Stolen Property Offenses
-    - **Population:** Identify crime per capita (1000 residents) for all counties between the years of 1997 and 2020
-    - **Income:** Identify Median Household Income for all counties between the years of 1997 and 2020
+#### Step 1: Identify Criteria
+
+- **Crimes:**  
+  Out of all the crime categories that exist, I chose 7 that closely resembled property-related or adjacent crimes that would factor into the ranking:
+  - Destruction/Damage/Vandalism of Property
+  - Burglary/Breaking & Entering
+  - Larceny/Theft Offenses
+  - Motor Vehicle Theft
+  - Robbery
+  - Arson
+  - Stolen Property Offenses
+
+- **Population:**  
+  Identify crime per capita (per 1,000 residents) for all counties between the years of 1997 and 2020.
+
+- **Income:**  
+  Identify Median Household Income for all counties between the years of 1997 and 2020.
+
+#### Step 2: Establish Individual Rankings
+
+For each metric, we transform raw data into a standardized ranking by following a similar process:
+
+##### Crime Categories
+For each of the 7 selected crime categories:
+- **Aggregate Data:**  
+  Count the number of incidents per county.
+- **Compute Percentile Ranks:**  
+  Use a percentile function (e.g., `PERCENT_RANK()`) to determine each county’s standing relative to others.
+- **Assign Tiers:**  
+  Based on the percentile (for example, dividing into quartiles), assign a tier (usually 1–4) for that specific crime.
+
+##### Population-Adjusted Crime (Crime Per Capita)
+We adjust raw crime counts by county population to calculate the crime rate per 1,000 residents. This involves:
+- **Calculating Yearly Crime Rates:**  
+  Join crime data with population figures.
+- **Averaging:**  
+  Compute an average crime rate per county over the selected years.
+- **Ranking:**  
+  Determine percentile ranks and assign tiers similarly to the individual crime categories.
+
+##### Income
+For median household income, we:
+- **Aggregate Income Data:**  
+  Average the income per county across the years.
+- **Compute Percentile Ranks:**  
+  Establish how each county compares to others.
+- **Assign Tiers:**  
+  Counties in the highest percentiles (top 25%) receive one tier, and so on for the others.
+
+
+
 
 ![B A S E  Future State Diagram (5)](https://github.com/user-attachments/assets/d665e2b9-ae7f-4bd7-85f0-6c5f5fedd3b6)
 
