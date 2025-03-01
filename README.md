@@ -15,7 +15,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 ### Features
 
 * 9,048,771 rows of source data extracted
-* A 28 task DAG using Airflow data pipeline orchestration running in an Astronomer cloud environment
+* A 28 task DAG using Airflow data pipeline orchestration running in an Astronomer production cloud environment
 * Grafana dashboards visualizing Colorado crime density and 16 required KPIs and use cases from the state
 * Grafana dashboard enabling a user experience for business entities to search for their company and discover their tier
 * Medallion architecture data design patterns
