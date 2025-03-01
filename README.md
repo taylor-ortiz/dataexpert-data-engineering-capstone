@@ -278,7 +278,8 @@ Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. Each su
 
 ### How Tiers Are Calculated and Assigned
 
-#### Step 1: Identify Criteria
+<details>
+<summary><strong>Step 1: Identify Criteria</strong></summary>
 
 - **Crimes:**  
   Out of all the crime categories that exist, I chose 7 that closely resembled property-related or adjacent crimes that would factor into the ranking:
@@ -296,7 +297,10 @@ Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. Each su
 - **Income:**  
   Identify Median Household Income for all counties between the years of 1997 and 2020.
 
-#### Step 2: Establish Individual Rankings
+</details>
+
+<details>
+<summary><strong>Step 2: Establish Individual Rankings</strong></summary>
 
 For each metric, we transform raw data into a standardized ranking by following a similar process:
 
@@ -326,6 +330,70 @@ For median household income, we:
   Establish how each county compares to others.
 - **Assign Tiers:**  
   Counties in the highest percentiles (top 25%) receive one tier, and so on for the others.
+
+</details>
+
+<details>
+<summary><strong>Example Query: Arson Crime Ranking</strong></summary>
+
+Below is an example query for evaluating the arson crime category and assigning a tier to counties:
+
+```sql
+CREATE TABLE tayloro.colorado_crime_tier_arson AS
+WITH crime_aggregated AS (
+    -- Step 1: Aggregate arson crime counts per county
+    SELECT
+        county,
+        COUNT(*) AS total_arson_crimes
+    FROM academy.tayloro.colorado_crimes
+    WHERE offense_category_name = 'Arson'
+    GROUP BY county
+),
+crime_percentiles AS (
+    -- Step 2: Compute percentile rank for arson crime counts per county
+    SELECT
+        county,
+        total_arson_crimes,
+        PERCENT_RANK() OVER (ORDER BY total_arson_crimes) AS crime_percentile
+    FROM crime_aggregated
+),
+crime_tiers AS (
+    -- Step 3: Assign tiers based on percentile rankings
+    SELECT
+        county,
+        total_arson_crimes,
+        crime_percentile,
+        CASE
+            WHEN crime_percentile >= 0.75 THEN 1 -- Counties with the highest counts (Top 25%)
+            WHEN crime_percentile >= 0.50 THEN 2 -- Next 25% (50%-75%)
+            WHEN crime_percentile >= 0.25 THEN 3 -- Next 25% (25%-50%)
+            ELSE 4                             -- Counties with the lowest counts (Bottom 25%)
+        END AS crime_tier
+    FROM crime_percentiles
+)
+SELECT * FROM crime_tiers;
+```
+
+</details>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
