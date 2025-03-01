@@ -42,7 +42,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
         2. [Step 2: Establish Individual Rankings](#step-2-establish-individual-rankings)
         3. [Step 3: Merge Individual Crime Rankings to Form a Unified Crime Tier County Rank](#merge-individual-crime-rankings)
         4. [Step 4: Merge Rankings for Final County Tier Rank](#final-county-tier)
-        5. [Step 5: Generate Business Entities Table with Final Ranking](#backfill-business-entities)
+        5. [Step 5: Backfill Business Entities Table with Final Ranking](#backfill-business-entities)
 4. [KPI and Use Case Visualizations](#kpi-and-use-case-visualizations)
     1. [Colorado County Dashboard](#colorado-county-dashboard)
     2. [Colorado City Dashboard](#colorado-city-dashboard)
@@ -297,7 +297,7 @@ Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. 1 indic
 <summary id="step-1-identify-criteria"><strong>Step 1: Identify Criteria</strong></summary>
 
 - **Crimes:**  
-  Out of all the crime categories that exist, I chose 7 that closely resembled property-related or adjacent crimes that would factor into the ranking:
+  Out of all the crime categories that exist, I chose 7 that closely resemble property-related or adjacent crimes that would factor into the ranking:
   - Destruction/Damage/Vandalism of Property
   - Burglary/Breaking & Entering
   - Larceny/Theft Offenses
@@ -319,7 +319,7 @@ Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. 1 indic
 <br/>
 For each metric, we transform raw data into a standardized ranking by following a similar process:
 
-##### Crime Categories
+#### Crime Categories
 For each of the 7 selected crime categories:
 - **Aggregate Data:**  
   Count the number of incidents per county.
@@ -328,7 +328,7 @@ For each of the 7 selected crime categories:
 - **Assign Tiers:**  
   Counties in the highest percentiles (top 25%) receive an assignment of 4. Counties >= 50% and <= 75% receive an assignment of 3. Counties >= 25% and <= 50% receive an assignment of 2. Counties that are <= 25% receive an assignment of 1. 
 
-##### Population-Adjusted Crime (Crime Per Capita)
+#### Population-Adjusted Crime (Crime Per Capita)
 We adjust raw crime counts by county population to calculate the crime rate per 1,000 residents. This involves:
 - **Calculating Yearly Crime Rates:**  
   Join crime data with population figures.
@@ -337,7 +337,7 @@ We adjust raw crime counts by county population to calculate the crime rate per 
 - **Ranking:**  
   Counties in the highest percentiles (top 25%) receive an assignment of 4. Counties >= 50% and <= 75% receive an assignment of 3. Counties >= 25% and <= 50% receive an assignment of 2. Counties that are <= 25% receive an assignment of 1. 
 
-##### Income
+#### Income
 For median household income, we:
 - **Aggregate Income Data:**  
   Average the income per county across the years.
@@ -346,7 +346,7 @@ For median household income, we:
 - **Assign Tiers:**  
   Income is the inverse of the previous two. We actually want to rank the best Income counties the lowest because they would require less subsidy assistance than lower income counties. Therefore, Counties in the highest percentiles (top 25%) receive an assignment of 1. Counties >= 50% and <= 75% receive an assignment of 2. Counties >= 25% and <= 50% receive an assignment of 3. Counties that are <= 25% receive an assignment of 4. 
 
-  Below is an example distribution. This is not perfect and I would certainly look to have this be a little more even but the result is good for a public dataset.
+  Below is an example distribution. While this is not a perfect distribution, I was pretty happy with the result from a public dataset. With a mostly even distribution based on percentage, we can start assigning tiers based on the rubric mentioned above.
 
   <img width="1123" alt="Screenshot 2025-02-28 at 5 24 50 PM" src="https://github.com/user-attachments/assets/b81e41d2-5fc1-4cf4-8055-36df7663a537" />
 
@@ -397,16 +397,17 @@ SELECT * FROM crime_tiers;
 <details>
 <summary id="merge-individual-crime-rankings"><strong>Step 3: Merge Individual Crime Rankings to Form a Unified Crime Tier County Rank</strong></summary>
 <br/>
-After calculating individual crime tiers for each of the 7 selected crime categories, the next step is to merge these rankings into a single unified score per county. This unified score, referred to as the **overall crime tier**, is computed by averaging the individual tiers for each county, then rounding the result to the nearest whole number. The process is accomplished by:
+
+After calculating individual crime tiers for each of the 7 selected crime categories, the next step is to merge these rankings into a single unified score per county. This unified score, referred to as the **overall crime tier**, is computed by averaging the individual tiers for each county and then rounding the result to the nearest whole number. The process involves the following steps:
 
 - **Unioning the Individual Tables:**  
   All individual crime tier tables (e.g., for property destruction, burglary, larceny/theft, etc.) are combined using a `UNION ALL`. Each record is tagged with its corresponding table name for identification.
 
 - **Pivoting and Aggregating Data:**  
-  The combined dataset is grouped by county. For each crime category, the query selects the crime tier, and then computes an average of these tiers across all categories.
+  The combined dataset is grouped by county. For each crime category, the query extracts the crime tier and computes the average of these tiers across all categories.
 
 - **Final Ordering:**  
-  The unified table is then sorted by the overall crime tier in descending order, highlighting counties with the highest aggregated crime tiers.
+  The resulting unified table is sorted by the overall crime tier in descending order, thereby highlighting counties with the highest aggregated crime tiers.
 
 Below is the SQL query that performs these operations:
 
@@ -520,7 +521,7 @@ ORDER BY final_rank ASC; -- Order by the final average rank
 </details>
 
 <details>
-<summary id="backfill-business-entities"><strong>Step 5: Generate Business Entities Table with Final Ranking</strong></summary>
+<summary id="backfill-business-entities"><strong>Step 5: Backfill Business Entities Table with Final Ranking</strong></summary>
 <br/>
 In this final step, we join the final county tier rank table with the business entities table. This allows us to backfill all business entities with their corresponding ranking information based on county. The query uses a `LEFT JOIN` to ensure that every business entity is retained, matching on a case-insensitive comparison of county names.
 
@@ -539,6 +540,8 @@ LEFT JOIN tayloro.colorado_final_county_tier_rank fr
 
 <img width="1122" alt="Screenshot 2025-02-28 at 9 39 08 PM" src="https://github.com/user-attachments/assets/75eb5f91-baa6-4e74-adc3-7a64d3c16595" />
 </details>
+
+Below is a visualization of how these datasets were merged together to form a cohesive ranking across the three main categories.
 
 ![B A S E  Future State Diagram (5)](https://github.com/user-attachments/assets/d665e2b9-ae7f-4bd7-85f0-6c5f5fedd3b6)
 
