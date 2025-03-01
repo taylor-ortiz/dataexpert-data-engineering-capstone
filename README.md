@@ -15,15 +15,14 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 ### Features
 
 * 9,048,771 rows of source data extracted
-* A 28 task DAG using Airflow data pipeline orchestration running in an Astronomer production cloud environment
-* Grafana dashboards visualizing Colorado crime density and 16 required KPIs and use cases from the state
-* Grafana dashboard enabling a user experience for business entities to search for their company and discover their tier
+* A 28 task DAG (Directed Acyclic Graph) using Apache Airflow data pipeline orchestration running in a Astronomer cloud production environment
+* Data visualization of 16 required KPIs and use cases, as well as overall Colorado crime density, using Grafana Labs dashboards
+* A user experience for Colorado business entities to search for their business, understand the tier structure, and discover what subsidy tier their business qualifies for using Grafana Labs dashboards
+* Apache Spark jobs with Amazon Web Services (AWS) and Geoapify Geocoding API
 * Medallion architecture data design patterns
 * Comprehensive architecture diagram
 * Comprehensive data dictionary displaying all data sources and manipulations used
-* Geoapify Geocoding API
-* Spark jobs with AWS
-
+  
 ## Table of Contents
 1. [Capstone Requirements](#capstone-requirements)
 2. [Project Overview](#project-overview)
