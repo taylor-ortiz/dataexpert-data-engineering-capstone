@@ -36,7 +36,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
    6. [Architecture](#architecture)
 3. [Business Entity Tier Ranking](#business-entity-tier-ranking)
    1. [Subsidy Tiers](#subsidy-tiers)
-   2. [How Tiers Are Created and Assigned](#how-tiers-are-created-and-assigned)
+   2. [How Tiers Are Calculated and Assigned](#how-tiers-are-calculated-and-assigned)
 4. [Business Entity Search Dashboard](#business-entity-search-dashboard)
 5. [Colorado County Dashboard](#colorado-county-dashboard)
 6. [Colorado City Dashboard](#colorado-city-dashboard)
@@ -270,10 +270,11 @@ Access the entire [capstone data dictionary](https://github.com/taylor-ortiz/dat
 
 ### Subsidy Tiers
 
-There are four tiers in the B.A.S.E. program. Each subsidy tier below offers a gradual increase of security system services based on the tier that your business falls into based on the evaluation across the crime, population and income datasets. 
+Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. Each subsidy tier below offers a gradual increase of security system services based on the tier that your business qualifies for. The idea is that tiers will be backfilled and assigned on the source business entities dataset and as new business entities are added daily to the Colorado Information Marketplace, those records will also be assigned a tier through the Airflow orchestration that we will cover below. However, how are tiers actually calculated and assigned? Read on!
+
 <img width="1406" alt="Screenshot 2025-02-28 at 4 44 20 PM" src="https://github.com/user-attachments/assets/46d1a897-69bd-4d81-a2b7-61c1001996ef" />
 
-### How Tiers Are Created and Assigned
+### How Tiers Are Calculated and Assigned
 
 ![B A S E  Future State Diagram (5)](https://github.com/user-attachments/assets/d665e2b9-ae7f-4bd7-85f0-6c5f5fedd3b6)
 
