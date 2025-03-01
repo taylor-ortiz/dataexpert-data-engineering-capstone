@@ -58,6 +58,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
     1. [In-depth Summary of Business Entities Data Cleaning and Update Process](#business-entity-data-cleaning)
     2. [Out-of-Memory (OOM) Exceptions and Spark Configuration Adjustments](#out-of-memory-spark)
     3. [Challenge: Ambiguous City and County Matching](#ambiguous-matching)
+    4. [Inconsistent Zip Code Formats Causing Casting Errors](#inconsistent-zip-format)
 8. [Closing Thoughts and Next Steps](#closing-thoughts-and-next-steps)
 
 
@@ -785,7 +786,31 @@ Incorporating the ZIP code significantly improved the accuracy of county assignm
 
 </details>
 
+<details>
+<summary id="inconsistent-zip-format"><strong>Inconsistent Zip Code Formats Causing Casting Errors</strong></summary>
+<br/>
 
+**Description:**  
+Initially, the ETL process transformed API responses without validating the `principalzipcode` field. This oversight led to casting errors when attempting to convert zip code values in unexpected formats (e.g., `"80137-6828"`) into an integer for insertion into the staging table.
+
+**Example:**  
+- **Problem Record:** A record with a `principalzipcode` value like `"80137-6828"` resulted in the following error during insertion:
+
+TrinoUserError: TrinoUserError(type=USER_ERROR, name=INVALID_CAST_ARGUMENT, message="Cannot cast '80137-6828' to INT", query_id=...)
+
+**Resolution:**  
+- **Data Transformation Enhancement:**  
+I updated the `transform_entity_data_to_records` function to validate the zip code using a regular expression. Only zip codes matching exactly five digits (`\d{5}`) are accepted:
+- Valid zip codes are converted to an integer.
+- Invalid zip codes are set to Python’s `None`.
+
+- **SQL Query Adjustment:**  
+In the `insert_into_staging_table` function, I modified the query construction to check for `None`. If a zip code is `None`, it is replaced with the SQL literal `NULL` (without quotes) in the final query. This ensures that only a valid integer or a proper `NULL` value is inserted into the `principalzipcode` column.
+
+**Outcome:**  
+By separating data validation from SQL query construction, this solution prevents casting errors and maintains data integrity. Only correctly formatted 5-digit zip codes (or `NULL` for invalid ones) are passed to the database, resulting in a robust and error-free ETL process.
+
+</details>
 
 ## Next Steps and Closing Thoughts
 
@@ -793,10 +818,10 @@ Incorporating the ZIP code significantly improved the accuracy of county assignm
 
 Here is a running list of things that I would continue to refine, improve or new features I would introduce:
 - Address level tier assignment that are specific to the lat and long of business location
-- Understanding residential vs commercial and how to delineate 
+- Understanding residential vs commercial businesses and how to delineate on security subsidy
 - Write automation to handle the duplicates and misfits table instead of it being manually remedied
 - Build Machine Learning in to the population projections data that uses forecasted population growth to predict crime trends in respective counties
 
 ### Closing Thoughts
 
-In closing, this capstone project was easily one of the hardest projects that I have ever done by myself end to end. The most exciting thing about it is that while I only focused on 16 KPIs and use cases that I made up, these datasets could serve hundreds of other exciting and interesting use cases. I spent countless hours over 8 weeks finding the right datasets, refining the data into the KPIs and Use Cases you just reviewed and building the experience that allows business owners to search for their qualifying subsidy tiers. I am so proud of myself and what I was able to accomplish from free data extracts. It was really cool for me to focus on data that is in my own back yard here in Colorado. I was able to accomplish things I never thought I would ever do and I cannot wait to see what is next for my career after this. 
+In closing, this capstone project was easily one of the hardest projects that I have ever done by myself end to end. I pushed myself and accomplished more than I ever thought I would and had so much fun in the process. The most exciting thing about it is that while I only focused on 16 KPIs and use cases that I made up, these datasets could serve hundreds of other exciting and interesting use cases. I spent countless hours over 8 weeks finding the right datasets, refining the data into the KPIs and Use Cases you just reviewed and building the experience that allows business owners to search for their qualifying subsidy tiers. I am so proud of myself and what I was able to accomplish from free data extracts. It was really cool for me to focus on data that is in my own back yard here in Colorado. I was able to accomplish things I never thought I would ever do and I cannot wait to see what is next for my career after this. 
