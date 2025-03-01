@@ -300,7 +300,7 @@ Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. Each su
 </details>
 
 <details>
-<summary><strong>Step 2: Establish Individual Rankings</strong></summary>
+<summary id="step-2-establish-individual-rankings"><strong>Step 2: Establish Individual Rankings</strong></summary>
 
 For each metric, we transform raw data into a standardized ranking by following a similar process:
 
