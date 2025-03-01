@@ -55,7 +55,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
     1. [Business Entity Search Dashboard](#business-entity-search-dashboard)
 7. [Challenges and Findings](#challenges-and-findings)
     1. [In-depth Summary of Business Entities Data Cleaning and Update Process](#business-entity-data-cleaning)
-    2. [Out-of-Memory (OOM) Exceptions and Spark Configuration Adjustments](#out-of-memory-exceptions)
+    2. [Out-of-Memory (OOM) Exceptions and Spark Configuration Adjustments](#out-of-memory-spark)
 8. [Closing Thoughts and Next Steps](#closing-thoughts-and-next-steps)
 
 
