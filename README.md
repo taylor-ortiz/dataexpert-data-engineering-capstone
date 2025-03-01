@@ -39,6 +39,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
    2. [How Tiers Are Calculated and Assigned](#how-tiers-are-calculated-and-assigned)
         1. [Step 1: Identify Criteria](#step-1-identify-criteria)
         2. [Step 2: Establish Individual Rankings](#step-2-establish-individual-rankings)
+        3. [Example Query: Arson Crime Ranking](#example-arson-query)
 4. [Business Entity Search Dashboard](#business-entity-search-dashboard)
 5. [Colorado County Dashboard](#colorado-county-dashboard)
 6. [Colorado City Dashboard](#colorado-city-dashboard)
@@ -334,7 +335,7 @@ For median household income, we:
 </details>
 
 <details>
-<summary><strong>Example Query: Arson Crime Ranking</strong></summary>
+<summary id="example-arson-query"><strong>Example Query: Arson Crime Ranking</strong></summary>
 
 Below is an example query for evaluating the arson crime category and assigning a tier to counties:
 
