@@ -5,18 +5,19 @@
 #
 
 <p align="center">
-  <strong>A data engineering capstone project that builds a program for Colorado's OEDIT to allocate security system subsidies to businesses using historical crime, population, and income data trends from 1997-2020.</strong>
+  <strong>A data engineering capstone project that builds a program for Colorado's OEDIT (Office of Economic Development and International Trade) to allocate security system subsidies to businesses using historical crime, population, and income data trends from 1997-2020.</strong>
 </p>
 
 ### About
 
-My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engineering bootcamp as part of the January 2025 bootcamp. Part of the requirements for achieving the highest certification in the bootcamp is to complete a capstone project that showcases the skills attained during the bootcamp and the general skills that I possess as a data engineer and data architect. The following capstone business case, KPIs, and use cases are fictional and made up by me for the sake of the exercise (although I think it has merit for an actual State of Colorado OEDIT program one day). The technology stack used was built entirely from scratch using publicly accessible data from [data.colorado.gov](https://data.colorado.gov) and [CDPHE Open Data](https://data-cdphe.opendata.arcgis.com/). Enjoy!
+My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engineering bootcamp as part of the January 2025 cohort. Part of the requirements for achieving the highest certification in the bootcamp is to complete a capstone project that showcases the skills attained during the bootcamp and the general skills that I possess as a data engineer and data architect. The following capstone business case, KPIs, and use cases are fictional and made up by me for the sake of the exercise (although I think it has merit for an actual State of Colorado OEDIT program one day). The technology stack used was built entirely from scratch using publicly accessible data from [data.colorado.gov](https://data.colorado.gov) and [CDPHE Open Data](https://data-cdphe.opendata.arcgis.com/). Enjoy!
 
 ### Features
 
 * 9,048,771 rows of source data extracted
-* Grafana dashboards displaying 16 required KPIs and use cases
 * A 28 task DAG using Airflow data pipeline orchestration running in an Astronomer cloud environment
+* Grafana dashboards visualizing Colorado crime density and 16 required KPIs and use cases from the state
+* Grafana dashboard enabling a user experience for business entities to search for their company and discover their tier
 * Medallion architecture data design patterns
 * Comprehensive architecture diagram
 * Comprehensive data dictionary displaying all data sources and manipulations used
@@ -74,12 +75,13 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 * Build ETL pipelines to transform and load the data.
 * Run pipelines and perform data quality checks.
 * Visualize or present the data through dashboards, applications, or reports.
+* Your data pipeline must be running in a production cloud environment
 
 ## Project Overview
 
 ### Problem Statement
 
-* The State of Colorado has hired your data firm to develop an internal back-office tool to support a critical initiative for the Office of Economic Development and International Trade (OEDIT). The program, B.A.S.E. (Business Assistance for Security Enhancements), is designed to evaluate and qualify businesses across the state for business security system subsidies to protect their business based on historical crime trends, income, and population data by city and county. Historical data from 1997 to 2020, as well as real time data, will be analyzed to determine which security tiers businesses qualify for.
+* The State of Colorado has hired your data firm to develop internal back-office visualizations and a front facing business user experience to support a critical initiative for the Office of Economic Development and International Trade (OEDIT). The program, B.A.S.E. (Business Assistance for Security Enhancements), is designed to evaluate and qualify businesses across the state for security system subsidies to protect their business based on historical crime trends, income, and population data by city and county. Historical data from 1997 to 2020, as well as new data extracted daily, will be analyzed to determine which security tiers businesses qualify for.
 * Additionally, the State of Colorado has sixteen KPIs and use cases they would like to see vizualized out of the extracted, transformed and aggregated data to assist them in planning, funding and outreach initiatives. 
 * This tool will allow OEDIT to automatically notify active businesses in good standing about the subsidies they qualify for, streamlining the application process for business owners seeking to participate. Lastly, the State requires the creation of an intuitive user experience that enables businesses to search for their assigned tier, providing them with easy access to their eligibility information.
 
@@ -267,15 +269,16 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 Access the entire [capstone data dictionary](https://github.com/taylor-ortiz/dataexpert-data-engineering-capstone/blob/main/Capstone-data-dictionary.csv) for more detailed info on these datasets used.
 
 ### Technologies Used
-- **Python:** Programming language used for Spark jobs and Airflow orchestration
-- **Airflow:** orchestration tool that manages, schedules and automates workflows using Apache Airflow
-- **AWS:** S3 storage for CSV extracts
+- **Python:** Programming language used for Spark jobs with AWS and Iceberg loads, Geoapify APIs and python callables in Airflow orchestration
+- **SQL:** fundamental for querying, transforming, and aggregating structured data.
+- **Apache Airflow:** orchestration tool that manages, schedules and automates the daily busines entity extract from the Colorado Information Marketplace
+- **AWS:** S3 bucket storage for CSV extracts
 - **Tabular:** data lake operations
-- **Trino:** distributed SQL query engine
+- **Trino:** distributed SQL query engine for medallion architecture
 - **Geoapify:** geocoding api for address validation of business entities
-- **Grafana:** dashboards for data visualizations
-- **Astronomer:** data orchestraton platform that provides a managed service for Apache Airflow
-- **Apache Spark:** open source distributed computing system for processing source extracts from AWS
+- **Grafana:** dashboards for data visualizations of KPIs, use cases and business user experience
+- **Astronomer:** data orchestraton platform that provides a managed service for Apache Airflow orchestrations in the cloud
+- **Apache Spark:** open source distributed computing system for processing source extracts from AWS to Iceberg and backfilling / verifying address data with Geoapify
 
 ### Architecture
 ![B A S E  Future State Diagram (4)](https://github.com/user-attachments/assets/78f8aaf2-af71-44d2-a08c-52d9b0d766da)
