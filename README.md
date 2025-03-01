@@ -344,21 +344,21 @@ For median household income, we:
 Below is an example query for evaluating the Destruction/Damage/Vandalism of Property crime category and assigning a tier to counties:
 
 ```sql
-CREATE TABLE tayloro.colorado_crime_tier_arson AS
+CREATE TABLE tayloro.colorado_crime_tier_destruction_property AS
 WITH crime_aggregated AS (
-    -- Step 1: Aggregate arson crime counts per county
+    -- Step 1: Aggregate property destruction crime counts per county
     SELECT
         county,
-        COUNT(*) AS total_arson_crimes
+        COUNT(*) AS total_property_destruction_crimes
     FROM academy.tayloro.colorado_crimes
     WHERE offense_category_name = 'Destruction/Damage/Vandalism of Property'
     GROUP BY county
 ),
 crime_percentiles AS (
-    -- Step 2: Compute percentile rank for arson crime counts per county
+    -- Step 2: Compute percentile rank for property destruction crime counts per county
     SELECT
         county,
-        total_arson_crimes,
+        total_property_destruction_crimes,
         PERCENT_RANK() OVER (ORDER BY total_arson_crimes) AS crime_percentile
     FROM crime_aggregated
 ),
@@ -366,7 +366,7 @@ crime_tiers AS (
     -- Step 3: Assign tiers based on percentile rankings
     SELECT
         county,
-        total_arson_crimes,
+        total_property_destruction_crimes,
         crime_percentile,
         CASE
             WHEN crime_percentile >= 0.75 THEN 1 -- Counties with the highest counts (Top 25%)
