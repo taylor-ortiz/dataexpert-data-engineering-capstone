@@ -276,6 +276,18 @@ Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. Each su
 
 ### How Tiers Are Calculated and Assigned
 
+- Step 1: Identify Criteria
+    - **Crimes:** out of all the crime categories that exist, I chose 7 that closely resembled property related or adjacent crimes that would factor into the ranking
+        - Destruction/Damage/Vandalism of Property
+        - Burglary/Breaking & Entering
+        - Larceny/Theft Offenses
+        - Motor Vehicle Theft
+        - Robbery
+        - Arson
+        - Stolen Property Offenses
+    - **Population:** Identify crime per capita (1000 residents) for all counties between the years of 1997 and 2020
+    - **Income:** Identify Median Household Income for all counties between the years of 1997 and 2020
+
 ![B A S E  Future State Diagram (5)](https://github.com/user-attachments/assets/d665e2b9-ae7f-4bd7-85f0-6c5f5fedd3b6)
 
 
