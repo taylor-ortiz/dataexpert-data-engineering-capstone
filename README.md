@@ -15,8 +15,8 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 ### Features
 
 * 9,048,771 rows of source data extracted
-* Grafana dashboards displaying 16 required KPIs
-* 28 task DAG using Airflow data pipeline orchestration running in Astronomer production
+* Grafana dashboards displaying 16 required KPIs and use cases
+* A 28 task DAG using Airflow data pipeline orchestration running in an Astronomer cloud environment
 * Medallion architecture data design patterns
 * Comprehensive architecture diagram
 * Comprehensive data dictionary displaying all data sources and manipulations used
@@ -56,6 +56,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
 7. [Challenges and Findings](#challenges-and-findings)
     1. [In-depth Summary of Business Entities Data Cleaning and Update Process](#business-entity-data-cleaning)
     2. [Out-of-Memory (OOM) Exceptions and Spark Configuration Adjustments](#out-of-memory-spark)
+    3. [Challenge: Ambiguous City and County Matching](#ambiguous-matching)
 8. [Closing Thoughts and Next Steps](#closing-thoughts-and-next-steps)
 
 
@@ -283,7 +284,7 @@ Access the entire [capstone data dictionary](https://github.com/taylor-ortiz/dat
 
 ### Subsidy Tiers
 
-Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. 1 indicates the lowest level need and 4 indicates the highest level need. Each subsidy tier below offers a gradual increase of security system services based on the tier that your business qualifies for. The idea is that tiers will be backfilled and assigned on the source business entities dataset and as new business entities are added daily to the Colorado Information Marketplace, those records will also be assigned a tier through the Airflow orchestration that we will cover below. However, how are tiers actually calculated and assigned? Read on!
+Tiers are represented as a range of 1 through 4 in the B.A.S.E. program. 1 indicates the lowest level need and 4 indicates the highest level need for security system subsidies. Each subsidy tier below offers a gradual increase of security system services based on the tier that your business qualifies for. The idea is that tiers will be backfilled and assigned on the source business entities dataset and as new business entities are added daily to the Colorado Information Marketplace, those records will also be assigned a tier through the Airflow orchestration that we will cover below. However, how are tiers actually calculated and assigned? Read on!
 
 <img width="1406" alt="Screenshot 2025-02-28 at 4 44 20 PM" src="https://github.com/user-attachments/assets/46d1a897-69bd-4d81-a2b7-61c1001996ef" />
 
@@ -392,8 +393,8 @@ SELECT * FROM crime_tiers;
 
 <details>
 <summary id="merge-individual-crime-rankings"><strong>Step 3: Merge Individual Crime Rankings to Form a Unified Crime Tier County Rank</strong></summary>
-
-After calculating individual crime tiers for each of the 7 selected crime categories, the next step is to merge these rankings into a single unified score per county. This unified score—referred to as the **overall crime tier**—is computed by averaging the individual tiers for each county, then rounding the result to the nearest whole number. The process is accomplished by:
+<br/>
+After calculating individual crime tiers for each of the 7 selected crime categories, the next step is to merge these rankings into a single unified score per county. This unified score, referred to as the **overall crime tier**, is computed by averaging the individual tiers for each county, then rounding the result to the nearest whole number. The process is accomplished by:
 
 - **Unioning the Individual Tables:**  
   All individual crime tier tables (e.g., for property destruction, burglary, larceny/theft, etc.) are combined using a `UNION ALL`. Each record is tagged with its corresponding table name for identification.
@@ -464,7 +465,7 @@ ORDER BY overall_crime_tier DESC;
 
 <details>
 <summary id="final-county-tier"><strong>Step 4: Merge Rankings for Final County Tier Rank</strong></summary>
-
+<br/>
 In this step, we combine the overall crime tier county rank, the income tier rank, and the population (crime per capita) rank to generate a final composite ranking for each county. Since our primary focus is on crime, we weigh the crime rank a little heavier in our final calculation.
 
 The merging process involves:
@@ -555,7 +556,7 @@ LEFT JOIN tayloro.colorado_final_county_tier_rank fr
 
 #### Business Entity Daily DAG
 
-This DAG calls out to the public Colorado Information Marketplace API every day at 6 AM MT and fetches yesterday's Colorado Business Entity data for processing. It then cleans the data, joins matching County data based on Zip and City and then assigns an appropriate subsidy tier. This DAG involves several tasks to ingest, clean, validate, enrich, and load data from the data.colorado.gov API into production tables. Below is a breakdown of each task and its purpose.
+The final part of the equation is our data pipeline that evaluates newly incoming business entities each day. This DAG calls out to the public Colorado Information Marketplace API every day at 6 AM MT and fetches yesterday's Colorado Business Entity data for processing. It then cleans the data, joins matching County data based on Zip and City and then assigns an appropriate subsidy tier. This DAG involves several tasks to ingest, clean, validate, enrich, and load data from the data.colorado.gov API into production tables. Below is a breakdown of each task and its purpose.
 
 ---
 
@@ -726,6 +727,27 @@ conf.set('spark.driver.memory', '16g')             # Increase driver memory to h
 ```
 By increasing the memory allocation and tuning the shuffle partitions, I was able to process the large CSV files efficiently and write to Iceberg without running into out-of-memory errors.
 </details>
+
+<details>
+<summary id="ambiguous-matching"><strong>Challenge: Ambiguous City and County Matching</strong></summary>
+
+**Description:**  
+Initially, my orchestration relied solely on a city and county dataset to map business entities to their respective counties. However, we encountered an issue where cities that span multiple counties were being randomly assigned to a single county.
+
+**Example:**  
+- **Aurora** is a prime example, as it spans across Douglas County, Arapahoe County, and Denver County.  
+- Without additional disambiguation, business entities located in Aurora were incorrectly mapped to one county at random, leading to inaccurate county assignments.
+
+**Resolution:**  
+- To address this, I enhanced the reference dataset by adding a **ZIP code** column.  
+- By matching on both the city and ZIP code of the business entity's address, the mapping became much more precise.  
+- This change ensured that each business entity is matched to the correct county based on a distinct combination of city and ZIP code.
+
+**Outcome:**  
+Incorporating the ZIP code significantly improved the accuracy of county assignments, eliminating the randomness in cases where cities span multiple counties.
+
+</details>
+
 
 ## Next Steps and Closing Thoughts
 
