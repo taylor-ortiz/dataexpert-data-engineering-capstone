@@ -547,6 +547,53 @@ LEFT JOIN tayloro.colorado_final_county_tier_rank fr
 
 ## Business Entity Data Pipeline
 
+<img width="870" alt="Screenshot 2025-02-28 at 6 23 12 AM" src="https://github.com/user-attachments/assets/73aeb31d-b6fc-416d-80ef-6f64d3fbb91b" />
+
+
+<img width="1011" alt="Screenshot 2025-02-28 at 6 22 22 AM" src="https://github.com/user-attachments/assets/b2785011-3f07-43fd-8588-a07875926614" />
+
+
 ## Challenges and Findings
+
+<details>
+<summary id="business-entity-data-cleaning"><strong>In-depth Summary of Business Entities Data Cleaning and Update Process</strong></summary>
+
+**Challenges Faced:**  
+- **Mismatches in Data:** A significant number of records in the `colorado_business_entities` table did not have corresponding county information when joined with the reference table (`colorado_city_county_zip`).  
+- **Inconsistent Data Formatting:** Issues such as typos, case discrepancies, and extra spaces in city names and ZIP codes led to failed matches.  
+- **Incomplete Reference Data:** Missing city/ZIP combinations and duplicate entries in the reference table required both augmentation and deduplication to ensure accurate mapping.
+
+**Process Overview:**
+
+1. **Initial Analysis and Identification of Issues**  
+   - Ran queries to identify records in `colorado_business_entities` with no matching county in the reference table.  
+   - Examined unmatched city/ZIP pairs to determine the most frequent discrepancies.
+
+2. **Data Correction in the Business Entities Table**  
+   - Performed manual corrections for known typos and inconsistencies (e.g., updating “peyton co” to “Peyton”, correcting ZIP 80524 entries to “Fort Collins”).  
+   - Verified corrections by running SELECT queries against both the business entities and reference datasets.
+
+3. **Assessing Match Quality**  
+   - Executed queries to compare the count of matched versus unmatched records, revealing a high number of mismatches that required further attention.
+
+4. **Inserting Missing Reference Data**  
+   - Augmented the reference table by inserting missing city/ZIP combinations (e.g., added entries for “Evans” in Weld County).  
+   - Inspected the reference table to ensure that the inserted data met quality standards.
+
+5. **Deduplicating the Reference Table**  
+   - Identified duplicate rows for certain city/ZIP pairs (such as “Burlington, 80807” and “New Raymer, 80742”).  
+   - Created a new deduplicated version of the reference table and replaced the original with the cleaned version.
+
+6. **Updating the Business Entities with County Data**  
+   - Employed a final update query (using a correlated subquery) to backfill the `principalcounty` field in `colorado_business_entities` by matching normalized city and ZIP code data from the cleaned reference table.  
+   - Verified the update by confirming that previously unmatched records were now successfully mapped.
+
+7. **Final Outcome**  
+   - **Normalized Addresses:** Data cleaning (trimming, lowercasing, casting ZIP codes) ensured consistent comparisons.  
+   - **Accurate Mapping:** Manual corrections and enhanced reference data led to a complete and unique set of city/ZIP combinations.  
+   - **Successful Update:** The final update query backfilled the `principalcounty` field for all records, reducing unmatched counts to zero.
+
+</details>
+
 
 ## Closing Thoughts and Next Steps
