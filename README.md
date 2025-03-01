@@ -275,6 +275,11 @@ There are four tiers in the B.A.S.E. program. Each subsidy tier below offers a g
 
 ### How Tiers Are Created and Assigned
 
+![B A S E  Future State Diagram (5)](https://github.com/user-attachments/assets/d665e2b9-ae7f-4bd7-85f0-6c5f5fedd3b6)
+
+
+<img width="1123" alt="Screenshot 2025-02-28 at 5 24 50 PM" src="https://github.com/user-attachments/assets/b81e41d2-5fc1-4cf4-8055-36df7663a537" />
+
 ## Business Entity Search Dashboard
 <img width="1412" alt="Screenshot 2025-02-28 at 5 08 32 PM" src="https://github.com/user-attachments/assets/3da8052f-2a73-4a00-aaa3-1314f4ea01b1" />
 
