@@ -727,4 +727,16 @@ conf.set('spark.driver.memory', '16g')             # Increase driver memory to h
 By increasing the memory allocation and tuning the shuffle partitions, I was able to process the large CSV files efficiently and write to Iceberg without running into out-of-memory errors.
 </details>
 
-## Closing Thoughts and Next Steps
+## Next Steps and Closing Thoughts
+
+### Next Steps
+
+Here is a running list of things that I would continue to refine, improve or new features I would introduce:
+- Address level tier assignment that are specific to the lat and long of business location
+- Understanding residential vs commercial and how to delineate 
+- Write automation to handle the duplicates and misfits table instead of it being manually remedied
+- Build Machine Learning in to the population projections data that uses forecasted population growth to predict crime trends in respective counties
+
+### Closing Thoughts
+
+In closing, this capstone project was easily one of the hardest projects that I have ever done by myself end to end. The most exciting thing about it is that while I only focused on 16 KPIs and use cases that I made up, these datasets could serve hundreds of other exciting and interesting use cases. I spent countless hours over 8 weeks finding the right datasets, refining the data into the KPIs and Use Cases you just reviewed and building the experience that allows business owners to search for their qualifying subsidy tiers. I am so proud of myself and what I was able to accomplish from free data extracts. It was really cool for me to focus on data that is in my own back yard here in Colorado. I was able to accomplish things I never thought I would ever do and I cannot wait to see what is next for my career after this. 
