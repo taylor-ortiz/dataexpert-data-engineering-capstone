@@ -55,6 +55,7 @@ My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engin
     1. [Business Entity Search Dashboard](#business-entity-search-dashboard)
 7. [Challenges and Findings](#challenges-and-findings)
     1. [In-depth Summary of Business Entities Data Cleaning and Update Process](#business-entity-data-cleaning)
+    2. [Out-of-Memory (OOM) Exceptions and Spark Configuration Adjustments](#out-of-memory-exceptions)
 8. [Closing Thoughts and Next Steps](#closing-thoughts-and-next-steps)
 
 
@@ -711,5 +712,19 @@ The dashboard below enables a business owner to navigate to this dashboard, sear
 
 </details>
 
+<details>
+<summary id="out-of-memory-spark"><strong>Out-of-Memory (OOM) Exceptions and Spark Configuration Adjustments</strong></summary>
+
+When processing large datasets (over a million rows) using Spark, I frequently encountered out-of-memory exceptions—especially when fetching large CSV files from S3 and writing to Iceberg. The default Spark settings were insufficient for these workloads.
+
+To address this challenge, I reviewed the Spark documentation and applied recommendations from the bootcamp. I adjusted the Spark configuration to allocate more memory to both the executors and the driver, and to optimize shuffle operations. The following settings helped mitigate the memory issues:
+
+```python
+conf.set('spark.executor.memory', '16g')         # Increase executor memory based on your system's capacity
+conf.set('spark.sql.shuffle.partitions', '200')    # Optimize the number of shuffle partitions
+conf.set('spark.driver.memory', '16g')             # Increase driver memory to handle larger workloads
+```
+By increasing the memory allocation and tuning the shuffle partitions, I was able to process the large CSV files efficiently and write to Iceberg without running into out-of-memory errors.
+</details>
 
 ## Closing Thoughts and Next Steps
