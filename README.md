@@ -11,13 +11,14 @@
 
 ### About
 
-$${\color{green} \text{UPDATE – Zach informed me on 5/22/25 that my Data Engineering capstone was selected as Best Capstone in the bootcamp! His feedback is below: }}$$
+> 🟢 **UPDATE –** On 5/22/25, Zach informed me that my Data Engineering capstone was selected as **Best Capstone** in the bootcamp! His feedback is below:
 
 ---
 
 > **“Taylor Ortiz’s capstone project, which won Best Capstone in our January 2025 Data Engineering bootcamp, demonstrated exceptional skills in data processing, quality validation, and solving real-world business challenges. His pipeline effectively addressed entity search and subsidy classification while handling data inconsistencies and deduplication. The well-structured documentation, including DAG runs and dashboards, highlighted his strong technical abilities and clear communication. Taylor would be a valuable asset to any data engineering team.”**
 >
 > — *Zach Wilson - dataexpert.io*
+
 
 
 
