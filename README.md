@@ -5,10 +5,22 @@
 #
 
 <p align="center">
+  
   <strong>A data engineering capstone project that builds a program for Colorado's OEDIT (Office of Economic Development and International Trade) to allocate security system subsidies to businesses using historical crime, population, and income data trends from 1997-2020.</strong>
 </p>
 
 ### About
+
+$${\color{green} \text{UPDATE – Zach informed me on 5/22/25 that my Data Engineering capstone was selected as Best Capstone in the bootcamp! His feedback is below: }}$$
+
+---
+
+> **“Taylor Ortiz’s capstone project, which won Best Capstone in our January 2025 Data Engineering bootcamp, demonstrated exceptional skills in data processing, quality validation, and solving real-world business challenges. His pipeline effectively addressed entity search and subsidy classification while handling data inconsistencies and deduplication. The well-structured documentation, including DAG runs and dashboards, highlighted his strong technical abilities and clear communication. Taylor would be a valuable asset to any data engineering team.”**
+>
+> — *Zach Wilson - dataexpert.io*
+
+
+
 
 My name is Taylor Ortiz and I enrolled in Zach Wilson's Dataexpert.io Data Engineering bootcamp as part of the January 2025 cohort. Part of the requirements for achieving the highest certification in the bootcamp is to complete a capstone project that showcases the skills attained during the bootcamp and the general skills that I possess as a data engineer and data architect. The following capstone business case, KPIs, and use cases are fictional and made up by me for the sake of the exercise (although I think it has merit for an actual State of Colorado OEDIT program one day). The technology stack used was built entirely from scratch using publicly accessible data from [data.colorado.gov](https://data.colorado.gov) and [CDPHE Open Data](https://data-cdphe.opendata.arcgis.com/). Enjoy!
 
